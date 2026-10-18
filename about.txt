@@ -1,0 +1,17 @@
+ignore about.txt, its my scratchpad
+review this expo blank template
+
+Auth Module
+based on app about, design direction
+turn LandingScreen as login screen, user fill phone number, otp (dummy)
+constant to keep credential types etv
+contexts to keep login flow, logout, existing session async secure store keep 1 day etc
+hooks to use it globally
+src/
+├── constants/
+│   └── auth.ts
+├── contexts/
+│   └── authContext.ts
+└── hooks/
+    └── useAuth.ts
+advice
