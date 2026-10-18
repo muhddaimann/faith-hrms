@@ -427,3 +427,15 @@ Do not make changes.
 - **Safe-area ownership:** `app/_layout.tsx` mounts one `SafeAreaProvider` and owns the root `SafeAreaView` with `edges={['top']}`. The LandingScreen does not add another safe-area wrapper.
 - **Approved dependencies:** `expo-router`, `expo-font`, `react-native-safe-area-context`, `@expo/vector-icons`, and `@expo-google-fonts/manrope`.
 - **Validation baseline:** Run `npx tsc --noEmit`, `npx expo config --type public --json`, native iOS and Android exports to temporary directories outside the repository, and `git diff --check` after implementation work.
+
+### Phase 2 — Theme Module
+
+- **Theme model:** Use typed, semantic light/dark tokens from `src/constants/theme.ts`. Tokens cover colors, spacing, typography, Manrope font families, opacity, radii, focus treatment, and platform-aware shadow/elevation.
+- **Color direction:** Preserve modern purple as the primary identity: light primary `#6D28D9`, with a light lavender supporting surface; dark mode uses accessible lavender-purple equivalents on deep indigo surfaces.
+- **Persistence:** Resolve the initial mode from the device appearance. A manual toggle is in-memory and session-only; it must not persist across restarts without explicit approval.
+- **Provider contract:** `ThemeProvider` exposes the resolved mode, optional session selection, active typed theme, and `toggleTheme()`. `useTheme()` must throw clearly outside the provider.
+- **Root integration:** Keep provider order as `SafeAreaProvider` → `ThemeProvider` → one themed root `SafeAreaView` with `edges={['top']}`. Root background and Expo status-bar style follow the resolved theme; themed routes do not own another default safe-area wrapper.
+- **Themed UI:** Use token-driven inline styles for themed UI rather than `StyleSheet.create`.
+- **Theme toggle:** Use the reusable Ionicons-based `ThemeToggle` with 48-point minimum dimensions, switch accessibility semantics, next-mode label/hint, and native-driver press-scale feedback.
+- **Reference screen:** The LandingScreen remains scrollable and renders active specimens for every approved theme token group so mode changes are visibly verifiable.
+- **Dependencies and validation:** No Phase 2 dependency or Expo configuration change was required. Validate TypeScript, iOS/Android exports outside the repository, `git diff --check`, and manual light/dark behavior, safe-area, accessibility, and compact/large-text reachability.
