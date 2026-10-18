@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The initial version is `0.0.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.1.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -462,3 +462,11 @@ Do not make changes.
 - **Navigation behavior:** Pressing the active tab is a no-op. Inactive tab switches use replacement navigation. Landing-to-Home and Home-to-Landing actions also use replacement navigation. Nested demo routes return to their owning root route and do not render the floating bar.
 - **Settings integration:** Settings includes the approved reusable session-only `ThemeToggle` and presents current theme/session information.
 - **Dependencies and validation:** Phase 4 added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, and `git diff --check`; manually verify tab behavior, nested-route bar visibility, safe-area placement, and navigation on iOS and Android.
+
+### Phase 5 — Shared Module
+
+- **Shared screen foundation:** Reusable shared components provide screen layout and presence motion, empty states, long-list behavior, and accessible option pickers. Root Home and Settings routes reserve clearance for floating controls; nested routes do not.
+- **Floating-control ownership:** `BarProvider` coordinates only the focused screen's registered scroll controller. Root Home and Settings routes hand off between the floating tab pill at rest and a centered scroll-to-top action after scroll-direction hysteresis; nested routes never show the tab pill and may show only scroll-to-top.
+- **Picker and overlay behavior:** Home action choices use the typed custom-modal overlay and navigate only after the single-safe dismissal completion. Settings preferences use the typed bottom sheet, remain session-only, and dismiss after a selection. Backdrop and hardware-back dismissal do not trigger selection actions.
+- **Navigation and platform behavior:** Shared controls remain bottom-inset-aware, use a fixed fade-only control stage, prevent interaction while fading out, and preserve the approved no-route-animation policy.
+- **Feature readiness:** Phase 5 is approved. Faith is ready to use the one-at-a-time `Idea to Feature` workflow for product feature slices.
