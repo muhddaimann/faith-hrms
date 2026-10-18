@@ -453,3 +453,12 @@ Do not make changes.
 - **Animation:** Centralize overlay fade, dialog, toast, sheet, and press-scale recipes in `src/helpers/animate.ts`.
 - **Android configuration:** `android.edgeToEdgeEnabled` is enabled. Full system-bar coverage and sheet placement require manual verification in a rebuilt Android development build or binary.
 - **Validation:** Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual overlay behavior including callback idempotence, system-bar readability, bottom-sheet gesture behavior, and toast/loader timing.
+
+### Phase 4 — Tabs Module
+
+- **Route hierarchy:** Preserve the LandingScreen at `/`. Primary experiences live in the Expo Router `(tabs)` group as `/home` and `/settings`, each with a nested stack and a temporary full-screen `demo/` route. Root, tab, and nested stack configurations use `headerShown: false` and `animation: 'none'`.
+- **Tab navigator:** Explicitly declare `home` and `settings` with `Tabs.Screen`; hide the native tab bar and use the shared custom navigation control instead.
+- **Floating navigation:** Render `src/components/tabs/bottomBar.tsx` only on the Home and Settings root routes. It uses themed Ionicons, 48-point minimum tab targets, selected accessibility state, press-scale feedback, and a safe-bottom anchor raised by one medium spacing token.
+- **Navigation behavior:** Pressing the active tab is a no-op. Inactive tab switches use replacement navigation. Landing-to-Home and Home-to-Landing actions also use replacement navigation. Nested demo routes return to their owning root route and do not render the floating bar.
+- **Settings integration:** Settings includes the approved reusable session-only `ThemeToggle` and presents current theme/session information.
+- **Dependencies and validation:** Phase 4 added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, and `git diff --check`; manually verify tab behavior, nested-route bar visibility, safe-area placement, and navigation on iOS and Android.

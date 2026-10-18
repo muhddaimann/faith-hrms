@@ -2,6 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRef, type ReactNode } from 'react';
 import type { StyleProp, TextStyle } from 'react-native';
 import { Animated, Pressable, ScrollView, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { ThemeToggle } from '../src/components/theme/themeToggle';
 import { about } from '../src/constants/about';
@@ -30,6 +31,7 @@ const loaderDemoDuration = 2_000;
 export default function LandingScreen() {
   const { mode, selectedMode, theme } = useTheme();
   const overlay = useOverlay();
+  const router = useRouter();
   const cardStyle = {
     borderWidth: 1,
     borderColor: theme.colors.border,
@@ -76,6 +78,7 @@ export default function LandingScreen() {
           </Text>
           <Text style={{ ...theme.typography.label, color: theme.colors.textMuted }}>Version {about.version}</Text>
         </View>
+        <OverlayTestButton accessibilityLabel="Enter Faith Home" label="Enter Faith Home" onPress={() => router.replace('/home')} />
       </View>
 
       <TokenSection title="Semantic colors" titleStyle={sectionTitleStyle}>
