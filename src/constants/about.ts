@@ -3,9 +3,13 @@ export const about = {
   appAbout: 'HRMS in your pocket',
   slug: 'faith-hrms',
   scheme: 'faith',
-  version: '0.2.0',
+  version: '0.3.0',
   designDirection: 'Modern purple, calm, and trustworthy workplace companion.',
   changelog: [
+    {
+      version: '0.3.0',
+      summary: 'Added the local employee profile experience with session-only updates.',
+    },
     {
       version: '0.2.0',
       summary: 'Added the local secure-session authentication experience and protected app access.',

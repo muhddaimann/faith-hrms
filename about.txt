@@ -24,3 +24,27 @@ use helpres/animate for animate in and out of AppScreen
 other icon for HomeScreen rightslot
 advice
 
+Profile Module
+based on app about, design direction
+user now can see details as an employee (Customer Service Agent), update etc
+replace settings/demo/ as settings/profile/
+constant to keep types, dummy data etc
+contexts to keep flow, read, update etc
+hooks to use it globally
+components/profile for any widgets related under
+├─ app/
+│  ├─ (tabs)/
+│  │  ├─ settings/
+│  │  │  ├─ profile/
+│  │  │  │  └─ index.tsx
+src/
+├── components/
+│   └── profile/
+├── constants/
+│   └── profile.ts
+├── contexts/
+│   └── profileContext.ts
+└── hooks/
+    └── useProfile.ts
+advice
+

@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.2.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.3.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -479,3 +479,12 @@ Do not make changes.
 - **Access control:** The authenticated `(tabs)` group redirects unauthenticated access to `/`. Settings provides a destructive-confirmation logout that removes secure session data before completing the in-memory sign-out.
 - **Login experience:** The root route is Faith's keyboard-safe, token-driven login screen with accessible username/password fields, password visibility control, toast feedback for incomplete or invalid sign-in, and a one-second blocking loader for sign-in, secure-session restoration, and logout. Route replacement occurs only after the loader dismissal callback.
 - **Dependencies and configuration:** `expo-secure-store` is an approved dependency and Expo config plugin. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual login/session-expiry/logout lifecycle behavior on iOS and Android.
+
+### Feature — Profile Module
+
+- **Profile boundary:** Faith provides a local, fictional employee profile for Maya Santos, Customer Service Agent in Customer Experience. It is not a production employee directory, source of truth, or backend-integrated HR record.
+- **Route and navigation:** Replace the temporary `/settings/demo` route with `/settings/profile`. The Profile route is full-screen, protected by the existing authenticated tabs boundary, hides the floating tab bar, and returns to `/settings` with replacement navigation.
+- **State and persistence:** `ProfileProvider` and `useProfile()` own typed profile read/update state. Only preferred name, work phone, and work location are locally editable; changes are session-only and reset on restart. Do not persist profile details, send them to a backend, or imply HR-system synchronization without explicit approval.
+- **Update lifecycle:** Edit within the approved custom modal. Invalid drafts show a warning toast and remain unsaved. Valid drafts close the modal, display a one-second blocking update loader, then apply the in-memory update and success toast after loader exit.
+- **Profile UI:** Use reusable profile header and information-card components with themed Ionicons and accessible 48-point controls. The Profile header exposes the edit control as a right-slot action, and the compact shared `AppScreen` header uses a 24/30 title and 14/20 subtitle with vertically centered right-slot actions.
+- **Dependencies and validation:** Profile added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual profile editing, cancellation, loader/toast sequencing, nested-route bar visibility, keyboard, large-text, and light/dark behavior.

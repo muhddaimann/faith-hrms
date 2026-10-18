@@ -117,10 +117,10 @@ export function AppScreen({ children, eyebrow, onBack, onRefresh, refreshing = f
             ) : null}
             <View style={{ flex: 1, gap: theme.spacing.xs }}>
               {eyebrow ? <Text style={{ ...theme.typography.eyebrow, color: theme.colors.primary }}>{eyebrow}</Text> : null}
-              <Text style={{ ...theme.typography.title, color: theme.colors.text }}>{title}</Text>
-              {subtitle ? <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{subtitle}</Text> : null}
+              <Text style={{ ...theme.typography.title, fontSize: 24, lineHeight: 30, letterSpacing: -0.5, color: theme.colors.text }}>{title}</Text>
+              {subtitle ? <Text style={{ ...theme.typography.body, fontSize: 14, lineHeight: 20, color: theme.colors.textSecondary }}>{subtitle}</Text> : null}
             </View>
-            {rightSlot ? <View style={{ alignSelf: 'flex-start' }}>{rightSlot}</View> : null}
+            {rightSlot ? <View style={{ justifyContent: 'center' }}>{rightSlot}</View> : null}
           </View>
           {children}
         </ScrollView>

@@ -12,12 +12,14 @@ import { useTheme } from '../../../src/hooks/useTheme';
 import { useOverlay } from '../../../src/hooks/useOverlay';
 import { useAuth } from '../../../src/hooks/useAuth';
 import { authFeedback } from '../../../src/constants/auth';
+import { useProfile } from '../../../src/hooks/useProfile';
 
 export default function SettingsScreen() {
   const { mode, selectedMode, theme } = useTheme();
   const router = useRouter();
   const { bottomSheet, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
   const { completeSignOut, prepareSignOut } = useAuth();
+  const { profile } = useProfile();
   const [preference, setPreference] = useState('default');
 
   const openPreferences = () => {
@@ -65,8 +67,15 @@ export default function SettingsScreen() {
             </View>
           </View>
 
-          <Pressable accessibilityLabel="Open Settings demo" accessibilityRole="button" onPress={() => router.push('/settings/demo')} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.md, backgroundColor: theme.colors.primary, opacity: pressed ? theme.opacity.pressed : 1 })}>
-            <Text style={{ ...theme.typography.label, color: theme.colors.textInverse }}>Open Settings demo</Text>
+          <Pressable accessibilityHint="Views and updates your work profile." accessibilityLabel="Open my profile" accessibilityRole="button" onPress={() => router.push('/settings/profile')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: pressed ? theme.colors.surfaceMuted : theme.colors.surface, padding: theme.spacing.lg, opacity: pressed ? theme.opacity.pressed : 1, ...theme.shadow.card })}>
+            <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.pill, backgroundColor: theme.colors.primary }}>
+              <Ionicons color={theme.colors.textInverse} name="person-outline" size={24} />
+            </View>
+            <View style={{ flex: 1, gap: theme.spacing.xxs }}>
+              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>My profile</Text>
+              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{profile.preferredName} · {profile.jobTitle}</Text>
+            </View>
+            <Ionicons color={theme.colors.iconMuted} name="chevron-forward" size={20} />
           </Pressable>
           <Pressable accessibilityLabel="Choose display preference" accessibilityRole="button" onPress={openPreferences} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.borderStrong, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface, opacity: pressed ? theme.opacity.pressed : 1 })}>
             <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Display preference: {preference === 'default' ? 'System default' : 'Compact updates'}</Text>
