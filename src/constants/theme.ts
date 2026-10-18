@@ -48,12 +48,12 @@ const typography = {
 const shadow = {
   card: Platform.select<ViewStyle>({
     ios: { shadowColor: '#1F1538', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 18 },
-    android: { elevation: 3 },
+    android: { elevation: 0 },
     default: {},
   }) ?? {},
   raised: Platform.select<ViewStyle>({
     ios: { shadowColor: '#1F1538', shadowOffset: { width: 0, height: 14 }, shadowOpacity: 0.16, shadowRadius: 28 },
-    android: { elevation: 7 },
+    android: { elevation: 0 },
     default: {},
   }) ?? {},
 } as const;
@@ -69,8 +69,9 @@ export const themes = {
       border: '#E4DEF1', borderStrong: '#CFC3EA', primary: '#6D28D9', primaryPressed: '#5B21B6',
       primarySoft: '#EDE9FE', accent: '#0F9F6E', accentSoft: '#DCFCE7', text: '#1F1538',
       textSecondary: '#675C7A', textMuted: '#8B819C', textInverse: '#FFFFFF', icon: '#5B21B6',
-      iconMuted: '#766A8B', focus: '#8B5CF6', success: '#15803D', warning: '#B45309',
-      danger: '#B91C1C', info: '#2563EB',
+      iconMuted: '#766A8B', focus: '#8B5CF6', overlayBackdrop: 'rgba(31, 21, 56, 0.56)',
+      success: '#15803D', successSoft: '#DCFCE7', warning: '#B45309', warningSoft: '#FEF3C7',
+      danger: '#B91C1C', dangerSoft: '#FEE2E2', info: '#2563EB', infoSoft: '#DBEAFE',
     },
   },
   dark: {
@@ -81,8 +82,9 @@ export const themes = {
       border: '#47375E', borderStrong: '#65517F', primary: '#B794F4', primaryPressed: '#D8B4FE',
       primarySoft: '#382155', accent: '#6EE7B7', accentSoft: '#173D35', text: '#F7F2FF',
       textSecondary: '#D2C8E1', textMuted: '#AA9DBE', textInverse: '#160F24', icon: '#D8B4FE',
-      iconMuted: '#B6A9C7', focus: '#C4B5FD', success: '#86EFAC', warning: '#FCD34D',
-      danger: '#FCA5A5', info: '#93C5FD',
+      iconMuted: '#B6A9C7', focus: '#C4B5FD', overlayBackdrop: 'rgba(7, 4, 12, 0.72)',
+      success: '#86EFAC', successSoft: '#173D35', warning: '#FCD34D', warningSoft: '#4B3510',
+      danger: '#FCA5A5', dangerSoft: '#4C1D2A', info: '#93C5FD', infoSoft: '#193A5E',
     },
   },
 } as const;

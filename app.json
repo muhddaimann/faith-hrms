@@ -11,6 +11,7 @@
       "supportsTablet": true
     },
     "android": {
+      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "backgroundColor": "#6D28D9",
         "foregroundImage": "./assets/android-icon-foreground.png",

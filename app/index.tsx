@@ -1,11 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import type { StyleProp, TextStyle } from 'react-native';
-import { ScrollView, Text, View } from 'react-native';
+import { Animated, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { ThemeToggle } from '../src/components/theme/themeToggle';
 import { about } from '../src/constants/about';
 import { themes } from '../src/constants/theme';
+import { pressScale } from '../src/helpers/animate';
+import { useOverlay } from '../src/hooks/useOverlay';
 import { useTheme } from '../src/hooks/useTheme';
 
 type ColorName = keyof (typeof themes)['light']['colors'];
@@ -23,9 +25,11 @@ const spacingNames = Object.keys(themes.light.spacing) as SpacingName[];
 const radiusNames = Object.keys(themes.light.radius) as RadiusName[];
 const opacityNames = Object.keys(themes.light.opacity) as OpacityName[];
 const shadowNames = Object.keys(themes.light.shadow) as ShadowName[];
+const loaderDemoDuration = 2_000;
 
 export default function LandingScreen() {
   const { mode, selectedMode, theme } = useTheme();
+  const overlay = useOverlay();
   const cardStyle = {
     borderWidth: 1,
     borderColor: theme.colors.border,
@@ -192,7 +196,166 @@ export default function LandingScreen() {
           <Text style={tokenValueStyle}>colors.focus · {theme.colors.focus} · 3px outline</Text>
         </View>
       </TokenSection>
+
+      <TokenSection title="Overlay manual testing" titleStyle={sectionTitleStyle}>
+        <View style={{ gap: theme.spacing.md }}>
+          <Text style={tokenValueStyle}>
+            Exercise every overlay type, including cancellation, dismissal, replacement, and bottom-sheet gestures.
+          </Text>
+
+          <OverlayTestButton
+            accessibilityLabel="Open alert test"
+            label="Open alert"
+            onPress={() => overlay.alert({
+              title: 'Standard alert',
+              message: 'Verify the dialog action, backdrop dismissal, and exit transition.',
+              onAction: () => overlay.toast({ tone: 'success', title: 'Alert complete', message: 'The alert action ran after dismissal.' }),
+            })}
+          />
+          <OverlayTestButton
+            accessibilityLabel="Open confirmation test"
+            label="Open confirmation"
+            onPress={() => overlay.confirm({
+              title: 'Confirm an action',
+              message: 'Confirm, cancel, tap the backdrop, or use Android back.',
+              onConfirm: () => overlay.toast({ tone: 'success', title: 'Confirmed', message: 'Confirmation completed after the dialog exit.' }),
+              onCancel: () => overlay.toast({ tone: 'info', title: 'Cancelled', message: 'Confirmation used the cancellation path.' }),
+            })}
+          />
+          <OverlayTestButton
+            accessibilityLabel="Open destructive confirmation test"
+            label="Open destructive confirmation"
+            tone="danger"
+            onPress={() => overlay.destructiveConfirm({
+              title: 'Delete sample item?',
+              message: 'This is a manual-test action only and does not delete any data.',
+              confirmLabel: 'Delete',
+              onConfirm: () => overlay.toast({ tone: 'danger', title: 'Destructive confirmed', message: 'No data was changed.' }),
+              onCancel: () => overlay.toast({ tone: 'info', title: 'Delete cancelled', message: 'The destructive action did not run.' }),
+            })}
+          />
+          <OverlayTestButton
+            accessibilityLabel="Open custom modal test"
+            label="Open custom modal"
+            onPress={() => overlay.customModal({
+              render: () => <OverlaySampleContent title="Custom modal" description="Verify a custom surface, backdrop dismissal, and explicit close action." />,
+              onDismiss: () => overlay.toast({ tone: 'info', title: 'Custom modal dismissed', message: 'The custom modal completed its exit lifecycle.' }),
+            })}
+          />
+          <OverlayTestButton
+            accessibilityLabel="Open bottom sheet test"
+            label="Open bottom sheet"
+            onPress={() => overlay.bottomSheet({
+              render: () => <OverlaySampleContent title="Bottom sheet" description="Drag only the handle, then test a short drag, threshold drag, velocity dismissal, and safe-bottom clearance." />,
+              onDismiss: () => overlay.toast({ tone: 'info', title: 'Sheet dismissed', message: 'The bottom sheet finished closing.' }),
+            })}
+          />
+          <OverlayTestButton
+            accessibilityLabel="Open temporary blocking loader test"
+            label="Open 2-second loader"
+            onPress={() => overlay.showLoader({
+              label: 'Blocking interaction for 2 seconds…',
+              duration: loaderDemoDuration,
+              onComplete: () => overlay.toast({ tone: 'success', title: 'Loader timeout completed', message: 'The provider-owned timer dismissed the loader.' }),
+            })}
+          />
+
+          <View style={{ gap: theme.spacing.sm }}>
+            <Text style={tokenNameStyle}>Toast tones and replacement</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
+              <OverlayTestButton
+                accessibilityLabel="Show success toast"
+                compact
+                label="Success"
+                tone="success"
+                onPress={() => overlay.toast({ tone: 'success', title: 'Success toast', message: 'Tap this toast or let it time out.' })}
+              />
+              <OverlayTestButton
+                accessibilityLabel="Show info toast"
+                compact
+                label="Info"
+                onPress={() => overlay.toast({ tone: 'info', title: 'Info toast', message: 'Open another toast quickly to test replacement.' })}
+              />
+              <OverlayTestButton
+                accessibilityLabel="Show warning toast"
+                compact
+                label="Warning"
+                tone="warning"
+                onPress={() => overlay.toast({ tone: 'warning', title: 'Warning toast', message: 'This is a visual and timer test.' })}
+              />
+              <OverlayTestButton
+                accessibilityLabel="Show danger toast"
+                compact
+                label="Danger"
+                tone="danger"
+                onPress={() => overlay.toast({ tone: 'danger', title: 'Danger toast', message: 'This does not represent a data failure.' })}
+              />
+            </View>
+          </View>
+        </View>
+      </TokenSection>
     </ScrollView>
+  );
+}
+
+function OverlayTestButton({
+  accessibilityLabel,
+  compact = false,
+  label,
+  onPress,
+  tone = 'primary',
+}: {
+  accessibilityLabel: string;
+  compact?: boolean;
+  label: string;
+  onPress: () => void;
+  tone?: 'primary' | 'success' | 'warning' | 'danger';
+}) {
+  const { theme } = useTheme();
+  const scale = useRef(new Animated.Value(1)).current;
+  const colors = {
+    primary: { background: theme.colors.primary, foreground: theme.colors.textInverse },
+    success: { background: theme.colors.success, foreground: theme.colors.textInverse },
+    warning: { background: theme.colors.warning, foreground: theme.colors.textInverse },
+    danger: { background: theme.colors.danger, foreground: theme.colors.textInverse },
+  }[tone];
+
+  return (
+    <Animated.View style={compact ? { transform: [{ scale }] } : { alignSelf: 'stretch', transform: [{ scale }] }}>
+      <Pressable
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        onPress={onPress}
+        onPressIn={() => pressScale(scale, 0.98).start()}
+        onPressOut={() => pressScale(scale, 1).start()}
+        style={({ pressed }) => ({
+          minHeight: 44,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: theme.spacing.md,
+          borderRadius: theme.radius.md,
+          backgroundColor: colors.background,
+          opacity: pressed ? theme.opacity.pressed : 1,
+        })}
+      >
+        <Text style={{ ...theme.typography.label, color: colors.foreground }}>{label}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
+function OverlaySampleContent({ description, title }: { description: string; title: string }) {
+  const { dismiss } = useOverlay();
+  const { theme } = useTheme();
+
+  return (
+    <View style={{ gap: theme.spacing.md }}>
+      <View style={{ gap: theme.spacing.xs }}>
+        <Text style={{ ...theme.typography.title, color: theme.colors.text }}>{title}</Text>
+        <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{description}</Text>
+      </View>
+      <OverlayTestButton accessibilityLabel={`Close ${title}`} label="Close" onPress={() => dismiss()} />
+    </View>
   );
 }
 
