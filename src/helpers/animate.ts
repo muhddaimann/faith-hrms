@@ -9,6 +9,12 @@ export const fadeIn = (value: Animated.Value) =>
 export const fadeOut = (value: Animated.Value) =>
   Animated.timing(value, { toValue: 0, duration: 180, useNativeDriver: true });
 
+export const screenEnter = (translateY: Animated.Value) =>
+  Animated.spring(translateY, { toValue: 0, useNativeDriver: true, speed: 16, bounciness: 3 });
+
+export const screenExit = (translateY: Animated.Value) =>
+  Animated.timing(translateY, { toValue: 8, duration: 180, useNativeDriver: true });
+
 export const dialogEnter = (value: Animated.Value) =>
   Animated.spring(value, { toValue: 1, useNativeDriver: true, speed: 16, bounciness: 4 });
 

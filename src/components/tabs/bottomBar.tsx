@@ -1,10 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePathname, useRouter } from 'expo-router';
 
 import { pressScale } from '../../helpers/animate';
+import { fadeIn, fadeOut } from '../../helpers/animate';
+import { layout } from '../../constants/layout';
+import { useBar } from '../../hooks/useBar';
 import { useTheme } from '../../hooks/useTheme';
 
 type TabItem = {
@@ -24,10 +27,33 @@ export function BottomBar() {
   const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const router = useRouter();
+  const { hasScrolled, isReturningToTop, scrollToTop } = useBar();
+  const tabOpacity = useRef(new Animated.Value(1)).current;
+  const topOpacity = useRef(new Animated.Value(0)).current;
+  const topScale = useRef(new Animated.Value(1)).current;
+  const isRootRoute = pathname === '/home' || pathname === '/settings';
+  const showTabs = isRootRoute && !hasScrolled;
+  const showScrollTop = hasScrolled;
+
+  useEffect(() => {
+    if (showTabs) {
+      fadeIn(tabOpacity).start();
+      fadeOut(topOpacity).start();
+      return;
+    }
+
+    fadeOut(tabOpacity).start();
+    if (showScrollTop) {
+      fadeIn(topOpacity).start();
+    } else {
+      fadeOut(topOpacity).start();
+    }
+  }, [showScrollTop, showTabs, tabOpacity, topOpacity]);
 
   return (
-    <View pointerEvents="box-none" style={{ position: 'absolute', right: theme.spacing.lg, bottom: Math.max(insets.bottom, theme.spacing.sm) + theme.spacing.md, left: theme.spacing.lg }}>
-      <View
+    <View pointerEvents="box-none" style={{ position: 'absolute', right: theme.spacing.lg, bottom: Math.max(insets.bottom, theme.spacing.sm) + theme.spacing.md, left: theme.spacing.lg, height: layout.floatingStageHeight, justifyContent: 'flex-end' }}>
+      <Animated.View
+        pointerEvents={showTabs ? 'auto' : 'none'}
         style={{
           flexDirection: 'row',
           alignSelf: 'center',
@@ -38,6 +64,7 @@ export function BottomBar() {
           backgroundColor: theme.colors.surface,
           padding: theme.spacing.xs,
           ...theme.shadow.raised,
+          opacity: tabOpacity,
         }}
       >
         {tabs.map((tab) => (
@@ -52,7 +79,20 @@ export function BottomBar() {
             }}
           />
         ))}
-      </View>
+      </Animated.View>
+      <Animated.View pointerEvents={showScrollTop ? 'auto' : 'none'} style={{ position: 'absolute', alignSelf: 'center', bottom: 0, opacity: topOpacity, transform: [{ scale: topScale }] }}>
+        <Pressable
+          accessibilityLabel="Scroll to top"
+          accessibilityRole="button"
+          disabled={isReturningToTop}
+          onPress={scrollToTop}
+          onPressIn={() => pressScale(topScale, 0.94).start()}
+          onPressOut={() => pressScale(topScale, 1).start()}
+          style={({ pressed }) => ({ width: layout.floatingControlSize, height: layout.floatingControlSize, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.pill, backgroundColor: theme.colors.primary, opacity: isReturningToTop ? theme.opacity.muted : pressed ? theme.opacity.pressed : 1, ...theme.shadow.raised })}
+        >
+          <Ionicons color={theme.colors.textInverse} name="chevron-up" size={26} />
+        </Pressable>
+      </Animated.View>
     </View>
   );
 }

@@ -2,34 +2,54 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
+import { AppScreen } from '../../../src/components/shared/appScreen';
+import { LongList } from '../../../src/components/shared/longList';
+import { OptionPicker } from '../../../src/components/shared/optionPicker';
 import { BottomBar } from '../../../src/components/tabs/bottomBar';
 import { useTheme } from '../../../src/hooks/useTheme';
+import { useOverlay } from '../../../src/hooks/useOverlay';
 
 export default function HomeScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const { customModal, dismiss } = useOverlay();
+
+  const openActions = () => {
+    customModal({
+      render: () => (
+        <OptionPicker
+          mode="action"
+          onSelect={(value) => dismiss(() => router.push(value as '/home/demo'))}
+          options={[{ value: '/home/demo', label: 'Open Home demo', description: 'Navigate after the modal finishes closing.' }]}
+          title="Home actions"
+        />
+      ),
+    });
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background, paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.xl }}>
-      <View style={{ gap: theme.spacing.lg }}>
-        <View style={{ gap: theme.spacing.xs }}>
-          <Text style={{ ...theme.typography.eyebrow, color: theme.colors.primary }}>FAITH HRMS</Text>
-          <Text style={{ ...theme.typography.display, color: theme.colors.text }}>Home</Text>
-          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Your workplace companion is ready for its first product modules.</Text>
-        </View>
+    <>
+      <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<HeaderAction onPress={openActions} />} subtitle="Your workplace companion is ready for its first product modules." title="Home">
+        <View style={{ gap: theme.spacing.lg }}>
+          <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, gap: theme.spacing.sm, ...theme.shadow.card }}>
+            <Ionicons color={theme.colors.icon} name="briefcase-outline" size={28} />
+            <Text style={{ ...theme.typography.title, color: theme.colors.text }}>Your workday, organized</Text>
+            <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>This foundation is ready for attendance, leave, payslip, and profile modules.</Text>
+          </View>
 
-        <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, gap: theme.spacing.sm, ...theme.shadow.card }}>
-          <Ionicons color={theme.colors.icon} name="briefcase-outline" size={28} />
-          <Text style={{ ...theme.typography.title, color: theme.colors.text }}>Your workday, organized</Text>
-          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>This foundation is ready for attendance, leave, payslip, and profile modules.</Text>
+          <ScreenAction label="Open Home demo" onPress={() => router.push('/home/demo')} />
+          <ScreenAction label="Return to Faith landing" secondary onPress={() => router.replace('/')} />
+          <LongList label="Home foundation item" />
         </View>
-
-        <ScreenAction label="Open Home demo" onPress={() => router.push('/home/demo')} />
-        <ScreenAction label="Return to Faith landing" secondary onPress={() => router.replace('/')} />
-      </View>
+      </AppScreen>
       <BottomBar />
-    </View>
+    </>
   );
+}
+
+function HeaderAction({ onPress }: { onPress: () => void }) {
+  const { theme } = useTheme();
+  return <Pressable accessibilityLabel="Open Home actions" accessibilityRole="button" onPress={onPress} style={({ pressed }) => ({ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.pill, backgroundColor: pressed ? theme.colors.surfaceMuted : theme.colors.surface })}><Ionicons color={theme.colors.icon} name="options-outline" size={22} /></Pressable>;
 }
 
 function ScreenAction({ label, onPress, secondary = false }: { label: string; onPress: () => void; secondary?: boolean }) {

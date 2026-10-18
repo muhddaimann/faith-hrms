@@ -15,3 +15,11 @@ src/
 └── hooks/
     └── useAuth.ts
 advice
+
+HomeScreen no need view to wrap the appScreen
+appScreen itself need wrap the pages
+layout itsef need to handle bgColor since on Dark mode flickering white bgColor
+use helpres/animate for animate in and out of AppScreen
+other icon for HomeScreen rightslot
+advice
+

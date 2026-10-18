@@ -6,6 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemeProvider } from '../src/contexts/themeContext';
 import { OverlayProvider } from '../src/contexts/overlayProvider';
+import { BarProvider } from '../src/contexts/barContext';
 import { OverlayHost } from '../src/components/overlay/overlayHost';
 import { useTheme } from '../src/hooks/useTheme';
 import { useOverlay } from '../src/hooks/useOverlay';
@@ -21,9 +22,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <OverlayProvider>
-          {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
-        </OverlayProvider>
+        <BarProvider>
+          <OverlayProvider>
+            {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
+          </OverlayProvider>
+        </BarProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
@@ -38,7 +41,7 @@ function RootShell({ fontsLoaded, hostState }: { fontsLoaded: boolean; hostState
       <StatusBar style={active || mode === 'dark' ? 'light' : 'dark'} />
       <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: theme.colors.background }}>
         {fontsLoaded ? (
-          <Stack screenOptions={{ headerShown: false, animation: 'none' }} />
+          <Stack screenOptions={{ headerShown: false, animation: 'none', contentStyle: { backgroundColor: theme.colors.background } }} />
         ) : (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator color={theme.colors.primary} />
