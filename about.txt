@@ -3,9 +3,10 @@ review this expo blank template
 
 Auth Module
 based on app about, design direction
-turn LandingScreen as login screen, user fill phone number, otp (dummy)
+total redesign LandingScreen to be login page
+user need to fill username and password
 constant to keep credential types etv
-contexts to keep login flow, logout, existing session async secure store keep 1 day etc
+contexts to keep login flow, logout, existing session secure store keep 1 day etc
 hooks to use it globally
 src/
 ├── constants/

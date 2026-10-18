@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.1.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.2.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -470,3 +470,12 @@ Do not make changes.
 - **Picker and overlay behavior:** Home action choices use the typed custom-modal overlay and navigate only after the single-safe dismissal completion. Settings preferences use the typed bottom sheet, remain session-only, and dismiss after a selection. Backdrop and hardware-back dismissal do not trigger selection actions.
 - **Navigation and platform behavior:** Shared controls remain bottom-inset-aware, use a fixed fade-only control stage, prevent interaction while fading out, and preserve the approved no-route-animation policy.
 - **Feature readiness:** Phase 5 is approved. Faith is ready to use the one-at-a-time `Idea to Feature` workflow for product feature slices.
+
+### Feature — Auth Module
+
+- **Auth boundary:** Faith uses a local-only, non-production username/password flow for the current feature slice. It is not a real identity provider, backend login, token system, role system, or production authorization boundary.
+- **Session persistence:** Persist only versioned session metadata, username, issued time, and expiry time in `expo-secure-store`; never persist or log raw passwords. Valid sessions expire after 24 hours. Corrupt or expired secure-store data is cleared and resolves to login.
+- **Global contract:** `AuthProvider` and `useAuth()` own typed auth state and secure-session lifecycle. Interactive sign-in, restored sessions, and sign-out each use prepared state followed by a completion step so authentication state changes only after the approved loader exit lifecycle.
+- **Access control:** The authenticated `(tabs)` group redirects unauthenticated access to `/`. Settings provides a destructive-confirmation logout that removes secure session data before completing the in-memory sign-out.
+- **Login experience:** The root route is Faith's keyboard-safe, token-driven login screen with accessible username/password fields, password visibility control, toast feedback for incomplete or invalid sign-in, and a one-second blocking loader for sign-in, secure-session restoration, and logout. Route replacement occurs only after the loader dismissal callback.
+- **Dependencies and configuration:** `expo-secure-store` is an approved dependency and Expo config plugin. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual login/session-expiry/logout lifecycle behavior on iOS and Android.

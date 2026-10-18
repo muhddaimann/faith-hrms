@@ -1,372 +1,160 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRef, type ReactNode } from 'react';
-import type { StyleProp, TextStyle } from 'react-native';
-import { Animated, Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useRef, useState } from 'react';
+import { Animated, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
-import { ThemeToggle } from '../src/components/theme/themeToggle';
 import { about } from '../src/constants/about';
-import { themes } from '../src/constants/theme';
+import { authCredentialTypes, authFeedback } from '../src/constants/auth';
 import { pressScale } from '../src/helpers/animate';
+import { useAuth } from '../src/hooks/useAuth';
 import { useOverlay } from '../src/hooks/useOverlay';
 import { useTheme } from '../src/hooks/useTheme';
 
-type ColorName = keyof (typeof themes)['light']['colors'];
-type TypographyName = keyof (typeof themes)['light']['typography'];
-type FontFamilyName = keyof (typeof themes)['light']['fontFamily'];
-type SpacingName = keyof (typeof themes)['light']['spacing'];
-type RadiusName = keyof (typeof themes)['light']['radius'];
-type OpacityName = keyof (typeof themes)['light']['opacity'];
-type ShadowName = keyof (typeof themes)['light']['shadow'];
-
-const colorNames = Object.keys(themes.light.colors) as ColorName[];
-const typographyNames = Object.keys(themes.light.typography) as TypographyName[];
-const fontFamilyNames = Object.keys(themes.light.fontFamily) as FontFamilyName[];
-const spacingNames = Object.keys(themes.light.spacing) as SpacingName[];
-const radiusNames = Object.keys(themes.light.radius) as RadiusName[];
-const opacityNames = Object.keys(themes.light.opacity) as OpacityName[];
-const shadowNames = Object.keys(themes.light.shadow) as ShadowName[];
-const loaderDemoDuration = 2_000;
-
 export default function LandingScreen() {
-  const { mode, selectedMode, theme } = useTheme();
+  const { completeSignIn, prepareSignIn, status } = useAuth();
   const overlay = useOverlay();
   const router = useRouter();
-  const cardStyle = {
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.lg,
-    backgroundColor: theme.colors.surface,
-    padding: theme.spacing.md,
-    ...theme.shadow.card,
+  const { theme } = useTheme();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const buttonScale = useRef(new Animated.Value(1)).current;
+
+  const handleSignIn = async () => {
+    const normalizedUsername = username.trim();
+
+    if (!normalizedUsername || !password) {
+      overlay.toast({
+        tone: 'warning',
+        title: 'Complete your sign-in details',
+        message: 'Enter both your username and password to continue.',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    const loaderId = overlay.showLoader({ label: 'Signing you in…' });
+    const [didSignIn] = await Promise.all([
+      prepareSignIn({ username: normalizedUsername, password }),
+      new Promise<void>((resolve) => setTimeout(resolve, authFeedback.minimumLoaderDurationMs)),
+    ]);
+    setPassword('');
+
+    if (!didSignIn) {
+      overlay.dismiss(() => {
+        setSubmitting(false);
+        overlay.toast({
+          tone: 'danger',
+          title: 'Sign-in failed',
+          message: 'Username or password is incorrect. Try the development credentials shown below.',
+        });
+      });
+      return;
+    }
+
+    overlay.dismiss(() => {
+      setSubmitting(false);
+      completeSignIn();
+      router.replace('/home');
+    });
   };
-  const tokenNameStyle = { ...theme.typography.label, color: theme.colors.text };
-  const tokenValueStyle = { ...theme.typography.body, color: theme.colors.textSecondary };
-  const sectionTitleStyle = { ...theme.typography.title, color: theme.colors.text, marginBottom: theme.spacing.md };
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingHorizontal: theme.spacing.lg,
-        paddingTop: theme.spacing.xl,
-        paddingBottom: theme.spacing.xxxl,
-        gap: theme.spacing.xxl,
-      }}
-      showsVerticalScrollIndicator={false}
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-    >
-      <View style={{ gap: theme.spacing.lg }}>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: theme.spacing.md }}>
-          <View style={{ flex: 1, gap: theme.spacing.xs }}>
-            <Text style={{ ...theme.typography.eyebrow, color: theme.colors.primary }}>THEME FOUNDATION</Text>
-            <Text style={{ ...theme.typography.display, color: theme.colors.text }}>{about.appName}</Text>
-            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.textSecondary }}>{about.appAbout}</Text>
-          </View>
-          <ThemeToggle />
-        </View>
-
-        <View style={{ ...cardStyle, gap: theme.spacing.sm, backgroundColor: theme.colors.surfaceAccent }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
-            <Ionicons color={theme.colors.icon} name="color-palette-outline" size={22} />
-            <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Active theme</Text>
-          </View>
-          <Text style={{ ...theme.typography.title, color: theme.colors.text }}>{mode}</Text>
-          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>
-            {selectedMode === null
-              ? 'Following the device appearance for this session.'
-              : 'Using a session-only manual selection. Restart to follow the device again.'}
-          </Text>
-          <Text style={{ ...theme.typography.label, color: theme.colors.textMuted }}>Version {about.version}</Text>
-        </View>
-        <OverlayTestButton accessibilityLabel="Enter Faith Home" label="Enter Faith Home" onPress={() => router.replace('/home')} />
-      </View>
-
-      <TokenSection title="Semantic colors" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.sm }}>
-          {colorNames.map((name) => (
-            <View key={name} style={{ ...cardStyle, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
-              <View
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderWidth: 1,
-                  borderColor: theme.colors.borderStrong,
-                  borderRadius: theme.radius.md,
-                  backgroundColor: theme.colors[name],
-                }}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={tokenNameStyle}>colors.{name}</Text>
-                <Text style={tokenValueStyle}>{theme.colors[name]}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Typography" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.sm }}>
-          {typographyNames.map((name) => {
-            const value = theme.typography[name];
-
-            return (
-              <View key={name} style={{ ...cardStyle, gap: theme.spacing.xs }}>
-                <Text style={tokenNameStyle}>typography.{name}</Text>
-                <Text style={{ ...value, color: theme.colors.text }}>Faith HRMS specimen</Text>
-                <Text style={tokenValueStyle}>{value.fontSize}px · {value.lineHeight}px · {value.fontFamily}</Text>
-              </View>
-            );
-          })}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Font families" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.sm }}>
-          {fontFamilyNames.map((name) => (
-            <View key={name} style={{ ...cardStyle, gap: theme.spacing.xs }}>
-              <Text style={tokenNameStyle}>fontFamily.{name}</Text>
-              <Text style={{ fontFamily: theme.fontFamily[name], fontSize: 18, lineHeight: 26, color: theme.colors.text }}>
-                Faith in every workday
-              </Text>
-              <Text style={tokenValueStyle}>{theme.fontFamily[name]}</Text>
-            </View>
-          ))}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Spacing" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.sm }}>
-          {spacingNames.map((name) => {
-            const value = theme.spacing[name];
-
-            return (
-              <View key={name} style={{ ...cardStyle, gap: theme.spacing.sm }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: theme.spacing.md }}>
-                  <Text style={tokenNameStyle}>spacing.{name}</Text>
-                  <Text style={tokenValueStyle}>{value}px</Text>
-                </View>
-                <View style={{ height: 12, width: Math.max(value, 4), borderRadius: theme.radius.pill, backgroundColor: theme.colors.primary }} />
-              </View>
-            );
-          })}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Radii" titleStyle={sectionTitleStyle}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
-          {radiusNames.map((name) => (
-            <View key={name} style={{ ...cardStyle, width: '47%', gap: theme.spacing.sm }}>
-              <View style={{ height: 56, borderRadius: theme.radius[name], backgroundColor: theme.colors.primarySoft }} />
-              <Text style={tokenNameStyle}>radius.{name}</Text>
-              <Text style={tokenValueStyle}>{theme.radius[name]}px</Text>
-            </View>
-          ))}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Opacity states" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.sm }}>
-          {opacityNames.map((name) => (
-            <View key={name} style={{ ...cardStyle, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
-              <View style={{ width: 48, height: 48, borderRadius: theme.radius.md, backgroundColor: theme.colors.primary, opacity: theme.opacity[name] }} />
-              <View style={{ flex: 1 }}>
-                <Text style={tokenNameStyle}>opacity.{name}</Text>
-                <Text style={tokenValueStyle}>{theme.opacity[name]}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Shadow and elevation" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.lg, padding: theme.spacing.sm }}>
-          {shadowNames.map((name) => (
-            <View key={name} style={{ borderRadius: theme.radius.lg, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, ...theme.shadow[name] }}>
-              <Text style={tokenNameStyle}>shadow.{name}</Text>
-              <Text style={{ ...theme.typography.body, marginTop: theme.spacing.xs, color: theme.colors.textSecondary }}>
-                {name === 'card' ? 'Subtle surface elevation.' : 'Prominent floating elevation.'}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Focus treatment" titleStyle={sectionTitleStyle}>
-        <View style={{ ...cardStyle, gap: theme.spacing.sm }}>
-          <View style={{ borderWidth: 3, borderColor: theme.colors.focus, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface, padding: theme.spacing.md }}>
-            <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Focus-ring specimen</Text>
-          </View>
-          <Text style={tokenValueStyle}>colors.focus · {theme.colors.focus} · 3px outline</Text>
-        </View>
-      </TokenSection>
-
-      <TokenSection title="Overlay manual testing" titleStyle={sectionTitleStyle}>
-        <View style={{ gap: theme.spacing.md }}>
-          <Text style={tokenValueStyle}>
-            Exercise every overlay type, including cancellation, dismissal, replacement, and bottom-sheet gestures.
-          </Text>
-
-          <OverlayTestButton
-            accessibilityLabel="Open alert test"
-            label="Open alert"
-            onPress={() => overlay.alert({
-              title: 'Standard alert',
-              message: 'Verify the dialog action, backdrop dismissal, and exit transition.',
-              onAction: () => overlay.toast({ tone: 'success', title: 'Alert complete', message: 'The alert action ran after dismissal.' }),
-            })}
-          />
-          <OverlayTestButton
-            accessibilityLabel="Open confirmation test"
-            label="Open confirmation"
-            onPress={() => overlay.confirm({
-              title: 'Confirm an action',
-              message: 'Confirm, cancel, tap the backdrop, or use Android back.',
-              onConfirm: () => overlay.toast({ tone: 'success', title: 'Confirmed', message: 'Confirmation completed after the dialog exit.' }),
-              onCancel: () => overlay.toast({ tone: 'info', title: 'Cancelled', message: 'Confirmation used the cancellation path.' }),
-            })}
-          />
-          <OverlayTestButton
-            accessibilityLabel="Open destructive confirmation test"
-            label="Open destructive confirmation"
-            tone="danger"
-            onPress={() => overlay.destructiveConfirm({
-              title: 'Delete sample item?',
-              message: 'This is a manual-test action only and does not delete any data.',
-              confirmLabel: 'Delete',
-              onConfirm: () => overlay.toast({ tone: 'danger', title: 'Destructive confirmed', message: 'No data was changed.' }),
-              onCancel: () => overlay.toast({ tone: 'info', title: 'Delete cancelled', message: 'The destructive action did not run.' }),
-            })}
-          />
-          <OverlayTestButton
-            accessibilityLabel="Open custom modal test"
-            label="Open custom modal"
-            onPress={() => overlay.customModal({
-              render: () => <OverlaySampleContent title="Custom modal" description="Verify a custom surface, backdrop dismissal, and explicit close action." />,
-              onDismiss: () => overlay.toast({ tone: 'info', title: 'Custom modal dismissed', message: 'The custom modal completed its exit lifecycle.' }),
-            })}
-          />
-          <OverlayTestButton
-            accessibilityLabel="Open bottom sheet test"
-            label="Open bottom sheet"
-            onPress={() => overlay.bottomSheet({
-              render: () => <OverlaySampleContent title="Bottom sheet" description="Drag only the handle, then test a short drag, threshold drag, velocity dismissal, and safe-bottom clearance." />,
-              onDismiss: () => overlay.toast({ tone: 'info', title: 'Sheet dismissed', message: 'The bottom sheet finished closing.' }),
-            })}
-          />
-          <OverlayTestButton
-            accessibilityLabel="Open temporary blocking loader test"
-            label="Open 2-second loader"
-            onPress={() => overlay.showLoader({
-              label: 'Blocking interaction for 2 seconds…',
-              duration: loaderDemoDuration,
-              onComplete: () => overlay.toast({ tone: 'success', title: 'Loader timeout completed', message: 'The provider-owned timer dismissed the loader.' }),
-            })}
-          />
-
-          <View style={{ gap: theme.spacing.sm }}>
-            <Text style={tokenNameStyle}>Toast tones and replacement</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
-              <OverlayTestButton
-                accessibilityLabel="Show success toast"
-                compact
-                label="Success"
-                tone="success"
-                onPress={() => overlay.toast({ tone: 'success', title: 'Success toast', message: 'Tap this toast or let it time out.' })}
-              />
-              <OverlayTestButton
-                accessibilityLabel="Show info toast"
-                compact
-                label="Info"
-                onPress={() => overlay.toast({ tone: 'info', title: 'Info toast', message: 'Open another toast quickly to test replacement.' })}
-              />
-              <OverlayTestButton
-                accessibilityLabel="Show warning toast"
-                compact
-                label="Warning"
-                tone="warning"
-                onPress={() => overlay.toast({ tone: 'warning', title: 'Warning toast', message: 'This is a visual and timer test.' })}
-              />
-              <OverlayTestButton
-                accessibilityLabel="Show danger toast"
-                compact
-                label="Danger"
-                tone="danger"
-                onPress={() => overlay.toast({ tone: 'danger', title: 'Danger toast', message: 'This does not represent a data failure.' })}
-              />
-            </View>
-          </View>
-        </View>
-      </TokenSection>
-    </ScrollView>
-  );
-}
-
-function OverlayTestButton({
-  accessibilityLabel,
-  compact = false,
-  label,
-  onPress,
-  tone = 'primary',
-}: {
-  accessibilityLabel: string;
-  compact?: boolean;
-  label: string;
-  onPress: () => void;
-  tone?: 'primary' | 'success' | 'warning' | 'danger';
-}) {
-  const { theme } = useTheme();
-  const scale = useRef(new Animated.Value(1)).current;
-  const colors = {
-    primary: { background: theme.colors.primary, foreground: theme.colors.textInverse },
-    success: { background: theme.colors.success, foreground: theme.colors.textInverse },
-    warning: { background: theme.colors.warning, foreground: theme.colors.textInverse },
-    danger: { background: theme.colors.danger, foreground: theme.colors.textInverse },
-  }[tone];
-
-  return (
-    <Animated.View style={compact ? { transform: [{ scale }] } : { alignSelf: 'stretch', transform: [{ scale }] }}>
-      <Pressable
-        accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-        onPress={onPress}
-        onPressIn={() => pressScale(scale, 0.98).start()}
-        onPressOut={() => pressScale(scale, 1).start()}
-        style={({ pressed }) => ({
-          minHeight: 44,
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingHorizontal: theme.spacing.md,
-          borderRadius: theme.radius.md,
-          backgroundColor: colors.background,
-          opacity: pressed ? theme.opacity.pressed : 1,
-        })}
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: theme.spacing.lg, paddingVertical: theme.spacing.xxl }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1, backgroundColor: theme.colors.background }}
       >
-        <Text style={{ ...theme.typography.label, color: colors.foreground }}>{label}</Text>
-      </Pressable>
-    </Animated.View>
-  );
-}
+        <View style={{ gap: theme.spacing.xxl }}>
+          <View style={{ alignItems: 'center', gap: theme.spacing.md }}>
+            <View style={{ width: 76, height: 76, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.xl, backgroundColor: theme.colors.primary, ...theme.shadow.raised }}>
+              <Ionicons color={theme.colors.textInverse} name="shield-checkmark-outline" size={38} />
+            </View>
+            <View style={{ alignItems: 'center', gap: theme.spacing.xs }}>
+              <Text style={{ ...theme.typography.eyebrow, color: theme.colors.primary }}>WELCOME TO</Text>
+              <Text style={{ ...theme.typography.display, color: theme.colors.text }}>{about.appName}</Text>
+              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary, textAlign: 'center' }}>{about.appAbout}</Text>
+            </View>
+          </View>
 
-function OverlaySampleContent({ description, title }: { description: string; title: string }) {
-  const { dismiss } = useOverlay();
-  const { theme } = useTheme();
+          <View style={{ gap: theme.spacing.lg, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, ...theme.shadow.card }}>
+            <View style={{ gap: theme.spacing.xs }}>
+              <Text style={{ ...theme.typography.title, color: theme.colors.text }}>Sign in</Text>
+              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Access your workplace information securely.</Text>
+            </View>
 
-  return (
-    <View style={{ gap: theme.spacing.md }}>
-      <View style={{ gap: theme.spacing.xs }}>
-        <Text style={{ ...theme.typography.title, color: theme.colors.text }}>{title}</Text>
-        <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{description}</Text>
-      </View>
-      <OverlayTestButton accessibilityLabel={`Close ${title}`} label="Close" onPress={() => dismiss()} />
-    </View>
-  );
-}
+            <View style={{ gap: theme.spacing.sm }}>
+              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>{authCredentialTypes.username.label}</Text>
+              <TextInput
+                accessibilityHint="Enter your Faith username."
+                accessibilityLabel={authCredentialTypes.username.label}
+                autoCapitalize="none"
+                autoComplete={authCredentialTypes.username.autoComplete}
+                onChangeText={setUsername}
+                placeholder={authCredentialTypes.username.placeholder}
+                placeholderTextColor={theme.colors.textMuted}
+                returnKeyType="next"
+                style={{ minHeight: 52, borderWidth: 1, borderColor: theme.colors.borderStrong, borderRadius: theme.radius.md, backgroundColor: theme.colors.surfaceMuted, color: theme.colors.text, paddingHorizontal: theme.spacing.md, ...theme.typography.body }}
+                textContentType={authCredentialTypes.username.textContentType}
+                value={username}
+              />
+            </View>
 
-function TokenSection({ children, title, titleStyle }: { children: ReactNode; title: string; titleStyle: StyleProp<TextStyle> }) {
-  return (
-    <View>
-      <Text style={titleStyle}>{title}</Text>
-      {children}
-    </View>
+            <View style={{ gap: theme.spacing.sm }}>
+              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>{authCredentialTypes.password.label}</Text>
+              <View style={{ minHeight: 52, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: theme.colors.borderStrong, borderRadius: theme.radius.md, backgroundColor: theme.colors.surfaceMuted }}>
+                <TextInput
+                  accessibilityHint="Enter your Faith password."
+                  accessibilityLabel={authCredentialTypes.password.label}
+                  autoCapitalize="none"
+                  autoComplete={authCredentialTypes.password.autoComplete}
+                  onChangeText={setPassword}
+                  onSubmitEditing={handleSignIn}
+                  placeholder={authCredentialTypes.password.placeholder}
+                  placeholderTextColor={theme.colors.textMuted}
+                  returnKeyType="go"
+                  secureTextEntry={!showPassword}
+                  style={{ flex: 1, minHeight: 52, color: theme.colors.text, paddingLeft: theme.spacing.md, ...theme.typography.body }}
+                  textContentType={authCredentialTypes.password.textContentType}
+                  value={password}
+                />
+                <Pressable
+                  accessibilityHint={showPassword ? 'Hides your password.' : 'Shows your password.'}
+                  accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+                  accessibilityRole="button"
+                  onPress={() => setShowPassword((current) => !current)}
+                  style={({ pressed }) => ({ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', opacity: pressed ? theme.opacity.pressed : 1 })}
+                >
+                  <Ionicons color={theme.colors.iconMuted} name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={21} />
+                </Pressable>
+              </View>
+            </View>
+
+            <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+              <Pressable
+                accessibilityHint="Signs in with your username and password."
+                accessibilityLabel="Sign in"
+                accessibilityRole="button"
+                disabled={submitting || status === 'restoring'}
+                onPress={handleSignIn}
+                onPressIn={() => pressScale(buttonScale, 0.98).start()}
+                onPressOut={() => pressScale(buttonScale, 1).start()}
+                style={({ pressed }) => ({ minHeight: 52, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.md, backgroundColor: theme.colors.primary, opacity: submitting || status === 'restoring' ? theme.opacity.disabled : pressed ? theme.opacity.pressed : 1 })}
+              >
+                <Text style={{ ...theme.typography.label, color: theme.colors.textInverse }}>{submitting ? 'Signing in…' : 'Sign in'}</Text>
+              </Pressable>
+            </Animated.View>
+
+            <View style={{ flexDirection: 'row', gap: theme.spacing.sm, borderRadius: theme.radius.md, backgroundColor: theme.colors.warningSoft, padding: theme.spacing.md }}>
+              <Ionicons color={theme.colors.warning} name="information-circle-outline" size={21} />
+              <Text style={{ flex: 1, ...theme.typography.body, color: theme.colors.textSecondary }}>Development-only sign in: username <Text style={{ fontFamily: theme.fontFamily.bold, color: theme.colors.text }}>user</Text> and password <Text style={{ fontFamily: theme.fontFamily.bold, color: theme.colors.text }}>123</Text>. This is not production authentication.</Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

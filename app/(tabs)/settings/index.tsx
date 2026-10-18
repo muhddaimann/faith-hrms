@@ -10,16 +10,44 @@ import { BottomBar } from '../../../src/components/tabs/bottomBar';
 import { ThemeToggle } from '../../../src/components/theme/themeToggle';
 import { useTheme } from '../../../src/hooks/useTheme';
 import { useOverlay } from '../../../src/hooks/useOverlay';
+import { useAuth } from '../../../src/hooks/useAuth';
+import { authFeedback } from '../../../src/constants/auth';
 
 export default function SettingsScreen() {
   const { mode, selectedMode, theme } = useTheme();
   const router = useRouter();
-  const { bottomSheet, dismiss } = useOverlay();
+  const { bottomSheet, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
+  const { completeSignOut, prepareSignOut } = useAuth();
   const [preference, setPreference] = useState('default');
 
   const openPreferences = () => {
     bottomSheet({
       render: () => <OptionPicker mode="preference" onSelect={(value) => { setPreference(value); dismiss(); }} options={[{ value: 'default', label: 'System default', description: 'Keep the standard session setup.' }, { value: 'compact', label: 'Compact updates', description: 'A session-only settings specimen.' }]} selectedValue={preference} title="Display preference" />,
+    });
+  };
+
+  const requestLogout = () => {
+    destructiveConfirm({
+      title: 'Sign out of Faith?',
+      message: 'Your secure local session will be removed from this device.',
+      confirmLabel: 'Sign out',
+      onConfirm: () => {
+        void prepareSignOut().then((didSignOut) => {
+          if (didSignOut) {
+            showLoader({
+              duration: authFeedback.minimumLoaderDurationMs,
+              label: 'Signing you out…',
+              onComplete: () => {
+                completeSignOut();
+                router.replace('/');
+              },
+            });
+            return;
+          }
+
+          toast({ tone: 'danger', title: 'Could not sign out', message: 'Your secure session could not be cleared. Please try again.' });
+        });
+      },
     });
   };
 
@@ -42,6 +70,9 @@ export default function SettingsScreen() {
           </Pressable>
           <Pressable accessibilityLabel="Choose display preference" accessibilityRole="button" onPress={openPreferences} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.borderStrong, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface, opacity: pressed ? theme.opacity.pressed : 1 })}>
             <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Display preference: {preference === 'default' ? 'System default' : 'Compact updates'}</Text>
+          </Pressable>
+          <Pressable accessibilityLabel="Sign out" accessibilityRole="button" onPress={requestLogout} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.danger, borderRadius: theme.radius.md, backgroundColor: theme.colors.dangerSoft, opacity: pressed ? theme.opacity.pressed : 1 })}>
+            <Text style={{ ...theme.typography.label, color: theme.colors.danger }}>Sign out</Text>
           </Pressable>
           <LongList label="Settings foundation item" />
         </View>
