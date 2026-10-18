@@ -1,12 +1,17 @@
 {
-  "name": "native",
-  "version": "1.0.0",
-  "main": "index.ts",
+  "name": "faith-hrms",
+  "version": "0.0.0",
+  "main": "expo-router/entry",
   "dependencies": {
+    "@expo-google-fonts/manrope": "^0.4.2",
+    "@expo/vector-icons": "^15.0.2",
     "expo": "~58.0.14",
+    "expo-font": "~58.0.8",
+    "expo-router": "~58.0.23",
     "expo-status-bar": "~58.0.3",
     "react": "19.3.0",
-    "react-native": "0.88.0"
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "~5.10.1"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
@@ -15,8 +20,7 @@
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "ios": "expo start --ios"
   },
   "private": true
 }
