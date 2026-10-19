@@ -1,5 +1,7 @@
 import type Ionicons from '@expo/vector-icons/Ionicons';
 
+import type { ModuleIdentity } from './modules';
+
 export type NewsflashCategory = 'humanResource' | 'payroll';
 export type NewsflashPriority = 'critical' | 'important' | 'normal';
 export type NewsflashPriorityFilter = 'all' | NewsflashPriority;
@@ -26,6 +28,8 @@ export const newsflashPriorityMetadata: Record<NewsflashPriority, { icon: keyof 
   important: { icon: 'warning-outline', label: 'Important' },
   normal: { icon: 'information-circle-outline', label: 'Normal' },
 };
+
+export const newsflashModuleIdentity: ModuleIdentity = { icon: 'newspaper-outline', tone: 'info' };
 
 export const newsflashItems: readonly NewsflashItem[] = [
   {

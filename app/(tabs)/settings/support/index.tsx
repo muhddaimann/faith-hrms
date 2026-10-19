@@ -7,7 +7,7 @@ import { SupportEnquiryDetail } from '../../../../src/components/support/support
 import { AppScreen } from '../../../../src/components/shared/appScreen';
 import { EmptyState } from '../../../../src/components/shared/emptyState';
 import { TabSelector, type TabSelectorTone } from '../../../../src/components/shared/tabSelector';
-import { type SupportEnquiry, type SupportEnquiryFilter } from '../../../../src/constants/support';
+import { supportModuleIdentity, type SupportEnquiry, type SupportEnquiryFilter } from '../../../../src/constants/support';
 import { useOverlay } from '../../../../src/hooks/useOverlay';
 import { useSupport } from '../../../../src/hooks/useSupport';
 import { useTheme } from '../../../../src/hooks/useTheme';
@@ -48,7 +48,7 @@ export default function SupportRecordScreen() {
         <View style={{ gap: theme.spacing.sm }}>
           <Text style={{ ...theme.typography.title, fontSize: 20, lineHeight: 28, color: theme.colors.text }}>Your enquiries</Text>
           <TabSelector accessibilityLabel="Support enquiry status" items={supportFilters.map((filter) => ({ accessibilityLabel: filter === 'all' ? 'All support enquiries' : `${supportFilterLabels[filter]} support enquiries`, label: supportFilterLabels[filter], tone: supportFilterTones[filter], value: filter }))} onSelect={setSelectedFilter} scrollable selectedValue={selectedFilter} />
-          {records.length === 0 ? <EmptyState description={selectedFilter === 'all' ? 'New local support enquiries will appear here during this app session.' : `There are no ${selectedFilter} support enquiries during this session.`} icon="chatbubble-ellipses-outline" title={selectedFilter === 'all' ? 'No support enquiries' : `No ${selectedFilter} enquiries`} /> : records.map((enquiry) => <SupportEnquiryCard enquiry={enquiry} key={enquiry.id} onPress={() => openEnquiry(enquiry)} />)}
+          {records.length === 0 ? <EmptyState description={selectedFilter === 'all' ? 'New local support enquiries will appear here during this app session.' : `There are no ${selectedFilter} support enquiries during this session.`} icon={supportModuleIdentity.icon} title={selectedFilter === 'all' ? 'No support enquiries' : `No ${selectedFilter} enquiries`} /> : records.map((enquiry) => <SupportEnquiryCard enquiry={enquiry} key={enquiry.id} onPress={() => openEnquiry(enquiry)} />)}
         </View>
       </View>
     </AppScreen>

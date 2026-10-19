@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.8.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` (including the lockfile) and Expo config version.
+- **Version policy:** The current version is `0.9.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` (including the lockfile) and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -537,3 +537,20 @@ Do not make changes.
 - **Submission lifecycle:** Enquiry type selection uses the typed bottom sheet. A valid draft is created as a `submitted` enquiry after a one-second blocking loader; invalid drafts show a warning toast and remain unsaved. Cancellation and dismissal paths do not create enquiries.
 - **Attachment boundary:** Screenshot/file selection uses the shared `DocumentPicker`. Only session-only attachment metadata—filename, source, optional MIME type, and optional size—is kept; never a URI, file contents, uploads, or persistent storage.
 - **Validation:** Support added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual type/validation, attachment-source sequencing, loader/toast ordering, status filtering, detail sheet, narrow-width, large-text, light/dark, and iOS/Android behavior.
+
+### Feature — Home Actions
+
+- **Home action picker:** The Home right-slot action opens the typed custom-modal `OptionPicker` listing Manage Attendance (`/home/attendance`), Apply Leave (`/home/leave/apply`), Book a Room (`/home/room`), Manage Profile (`/settings/profile`), Reach Support (`/settings/support`), and Log out. Navigation runs only after the modal's single-safe dismissal completion.
+- **Home sign-out:** Log out reuses the Settings lifecycle—destructive confirmation, secure-session removal, one-second blocking loader, then replacement to `/`. Cancelling the confirmation keeps the session; a failed clear shows a danger toast.
+- **Home subtitle:** The Home `AppScreen` subtitle is "Your workday at a glance." The Home body action list remains unchanged.
+
+### Feature — Module Identity and Glance Dashboards
+
+- **Module identity constants:** Each module's constants file exports a `*ModuleIdentity` (`{ icon, tone }`): `attendanceModuleIdentity`, `leaveModuleIdentity`, `roomModuleIdentity`, `newsflashModuleIdentity`, `supportModuleIdentity`, `profileModuleIdentity`, plus `authSignOutIdentity`. Shared types `ModuleIcon`, `ModuleTone`, `ModuleIdentity`, and the `moduleToneSoftToken` map live in `src/constants/modules.ts`; components must not redefine icon or tone types.
+- **Home dashboard:** Home is a glance dashboard with a greeting header plus one `ModuleCard` per module (Attendance, Leave, Room, Newsflash, Support), each sourced from its `use*` fixtures and module identity, showing a metric and detail and navigating to the module.
+- **Settings dashboard:** Settings presents an account card (Profile identity), an Appearance card (primary tone), and a Support row. The About footer, Sign out action, and header `ThemeToggle` stay non-gradient to preserve emphasis.
+- **Shared tinted surface:** `src/components/shared/tintedSurface.tsx` owns the tone surface—rounded, bordered, `overflow: hidden`, with a right→left `LinearGradient` from `surface` to the tone's soft token. `ModuleCard`, `SettingsRow`, and accented `OptionPicker` rows render through it; the pressable wrapper owns radius, pressed opacity, and `shadow.card` so iOS shadows survive the clip. Icon-forward surfaces use a 30-point icon on the right with no chevron.
+- **Action picker:** Home action rows use per-module icons and tone gradients. Preference mode and untinted rows keep the flat treatment, so Leave, Support, and Newsflash preference pickers are unchanged.
+- **Dialog bounds:** Custom-modal content renders inside a bounded `ScrollView` (`overlayLayout.dialogVerticalPadding`) with `keyboardShouldPersistTaps="handled"`, so tall content scrolls instead of clipping.
+- **Dependency:** `expo-linear-gradient` is an approved Expo dependency. Gradient behavior requires verification in a rebuilt iOS/Android development build or binary.
+- **Validation:** Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual light/dark gradient and icon contrast, card-height parity, large-text and narrow-width wrapping, dialog scroll/clip, iOS shadow visibility, preference-picker parity, and navigation.

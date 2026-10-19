@@ -123,6 +123,7 @@ export function OverlayHost({ overlay, toast, completeOverlayAfterExit, dismissO
   }, [dismissOverlay, overlay]);
 
   const dialogWidth = Math.min(overlayLayout.dialogPreferredWidth, width - overlayLayout.dialogHorizontalPadding * 2);
+  const dialogMaxHeight = height - insets.top - insets.bottom - overlayLayout.dialogVerticalPadding;
 
   const handleSheetDismiss = (velocity = 0) => {
     if (!renderedOverlay || renderedOverlay.kind !== 'bottomSheet' || sheetIsExitingRef.current) {
@@ -259,7 +260,9 @@ export function OverlayHost({ overlay, toast, completeOverlayAfterExit, dismissO
                       ...theme.shadow.raised,
                     }}
                   >
-                    <DialogContent overlay={renderedOverlay} dismissOverlay={dismissOverlay} />
+                    <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ maxHeight: dialogMaxHeight }}>
+                      <DialogContent overlay={renderedOverlay} dismissOverlay={dismissOverlay} />
+                    </ScrollView>
                   </Animated.View>
                 </View>
               )}

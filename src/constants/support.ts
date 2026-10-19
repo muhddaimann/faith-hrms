@@ -1,5 +1,7 @@
 import type Ionicons from '@expo/vector-icons/Ionicons';
 
+import type { ModuleIdentity } from './modules';
+
 export type SupportEnquiryTypeId = 'bug' | 'feedback' | 'question';
 export type SupportEnquiryStatus = 'submitted' | 'inReview' | 'resolved';
 export type SupportEnquiryFilter = 'all' | SupportEnquiryStatus;
@@ -48,6 +50,8 @@ export const supportTypes: readonly SupportEnquiryType[] = [
   { id: 'feedback', label: 'Feedback', description: 'Share an idea or suggestion about your experience.', icon: 'bulb-outline', subjectPlaceholder: 'For example, add a quick search' },
   { id: 'question', label: 'Question', description: 'Ask about how a local Faith feature works.', icon: 'help-circle-outline', subjectPlaceholder: 'For example, do previews reset?' },
 ] as const;
+
+export const supportModuleIdentity: ModuleIdentity = { icon: 'chatbubble-ellipses-outline', tone: 'info' };
 
 export const initialSupportEnquiries: readonly SupportEnquiry[] = [
   { id: 'support-bug-navigation', reference: 'SUP-1042', typeId: 'bug', subject: 'Bottom navigation hides content on small screens', message: 'On a small phone the floating navigation covers the last card in the list. Scrolling helps, but the final item is hard to reach. This is a local preview of a bug report.', status: 'resolved', createdAt: '2026-10-06' },

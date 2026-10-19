@@ -189,3 +189,18 @@ src/
 └── hooks/
     └── useSupport.ts
 advice
+
+OptionPicker
+for HomeScreen rightSlot, instead of chevron right, display suitable icon for each module, color each
+advice
+
+OptionPicker for HomeScreen revise UI
+since each option have different color, try bigger icon, some gradient right to left each option
+advice
+
+HomeScreen ModuleCard too
+for consistence, no need chevron right, bigger icon top right, gradient
+advice
+
+HomeScreen updated, update SettingsScreen too
+advice

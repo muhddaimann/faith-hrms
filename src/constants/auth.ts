@@ -1,3 +1,5 @@
+import type { ModuleIdentity } from './modules';
+
 export const authCredentials = {
   username: 'user',
   password: '123',
@@ -27,6 +29,8 @@ export const authSession = {
 export const authFeedback = {
   minimumLoaderDurationMs: 1_000,
 } as const;
+
+export const authSignOutIdentity: ModuleIdentity = { icon: 'log-out-outline', tone: 'danger' };
 
 export type AuthCredentials = {
   password: string;

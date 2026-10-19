@@ -1,5 +1,7 @@
 import type Ionicons from '@expo/vector-icons/Ionicons';
 
+import type { ModuleIdentity } from './modules';
+
 export type RoomId = 'atlas' | 'harbor' | 'orchid' | 'summit';
 export type RoomSlotStatus = 'available' | 'unavailable' | 'booked';
 
@@ -51,6 +53,8 @@ export const rooms: readonly Room[] = [
   { id: 'orchid', name: 'Orchid', floor: 'Level 9 · Garden Wing', capacity: 4, equipment: ['Display', 'Whiteboard'], description: 'A quiet huddle room for small working sessions.', icon: 'flower-outline' },
   { id: 'summit', name: 'Summit', floor: 'Level 9 · North Wing', capacity: 16, equipment: ['Display', 'Video call', 'Whiteboard'], description: 'A larger collaboration space for presentations and workshops.', icon: 'trail-sign-outline' },
 ] as const;
+
+export const roomModuleIdentity: ModuleIdentity = { icon: 'business-outline', tone: 'info' };
 
 const baseSlots = [
   ['09:00', '09:30'], ['09:30', '10:00'], ['10:00', '10:30'], ['10:30', '11:00'],

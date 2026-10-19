@@ -1,3 +1,5 @@
+import type { ModuleIdentity } from './modules';
+
 export const profileFeedback = {
   updateLoaderDurationMs: 1_000,
 } as const;
@@ -23,6 +25,8 @@ export const profileFieldMetadata = {
     textContentType: 'telephoneNumber',
   },
 } as const;
+
+export const profileModuleIdentity: ModuleIdentity = { icon: 'person-circle-outline', tone: 'success' };
 
 export type EmployeeProfile = {
   department: string;

@@ -1,5 +1,7 @@
 import type Ionicons from '@expo/vector-icons/Ionicons';
 
+import type { ModuleIdentity } from './modules';
+
 export type AttendanceStatus = 'onTime' | 'late' | 'earlyDeparture' | 'absent' | 'leave' | 'weekend' | 'scheduled';
 export type AttendanceView = 'daily' | 'weekly' | 'monthly';
 
@@ -31,6 +33,8 @@ export const attendanceStatusMetadata: Record<AttendanceStatus, { icon: keyof ty
   weekend: { icon: 'cafe-outline', label: 'Weekend', tone: 'neutral' },
   scheduled: { icon: 'calendar-clear-outline', label: 'Scheduled', tone: 'info' },
 };
+
+export const attendanceModuleIdentity: ModuleIdentity = { icon: 'calendar-outline', tone: 'primary' };
 
 export const attendanceRecords: readonly AttendanceRecord[] = [
   { date: '2026-10-01', scheduledIn: '09:00', scheduledOut: '18:00', actualIn: '08:56', actualOut: '18:03', status: 'onTime' },

@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Text, View } from 'react-native';
 
-import { formatSupportDate, getSupportType, type SupportEnquiry } from '../../constants/support';
+import { formatSupportDate, getSupportType, supportModuleIdentity, type SupportEnquiry } from '../../constants/support';
 import { useTheme } from '../../hooks/useTheme';
 import { SupportStatusBadge } from './supportStatusBadge';
 
@@ -22,7 +22,7 @@ export function SupportEnquiryDetail({ enquiry }: { enquiry: SupportEnquiry }) {
 
       <View style={{ gap: theme.spacing.sm, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.lg, backgroundColor: theme.colors.surfaceMuted, padding: theme.spacing.md }}>
         <DetailRow icon="pricetag-outline" label="Reference" value={enquiry.reference} />
-        <DetailRow icon="chatbubble-ellipses-outline" label="Type" value={type.label} />
+        <DetailRow icon={supportModuleIdentity.icon} label="Type" value={type.label} />
         <DetailRow icon="send-outline" label="Submitted" value={formatSupportDate(enquiry.createdAt)} />
       </View>
 

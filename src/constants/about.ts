@@ -3,9 +3,13 @@ export const about = {
   appAbout: 'HRMS in your pocket',
   slug: 'faith-hrms',
   scheme: 'faith',
-  version: '0.8.0',
+  version: '0.9.0',
   designDirection: 'Modern purple, calm, and trustworthy workplace companion.',
   changelog: [
+    {
+      version: '0.9.0',
+      summary: 'Rebuilt Home and Settings as glance dashboards with per-module identity icons, gradient surfaces, and a shared tinted surface.',
+    },
     {
       version: '0.8.0',
       summary: 'Added local support enquiries and unified the shared tab selector across modules.',

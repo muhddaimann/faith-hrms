@@ -1,6 +1,7 @@
 export const overlayLayout = {
   dialogPreferredWidth: 360,
   dialogHorizontalPadding: 24,
+  dialogVerticalPadding: 48,
   sheetDragDismissRatio: 0.14,
   sheetDismissVelocity: 0.65,
   sheetHandleHeight: 44,

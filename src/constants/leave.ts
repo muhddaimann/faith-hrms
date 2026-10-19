@@ -1,5 +1,7 @@
 import type Ionicons from '@expo/vector-icons/Ionicons';
 
+import type { ModuleIdentity } from './modules';
+
 export type LeaveTypeId = 'annual' | 'sick' | 'emergency' | 'bereavement' | 'unpaid';
 export type LeaveApplicationStatus = 'pending' | 'approved' | 'cancelled' | 'rejected';
 export type LeaveApplicationFilter = 'all' | LeaveApplicationStatus;
@@ -61,6 +63,8 @@ export const leaveTypes: readonly LeaveType[] = [
   { id: 'bereavement', label: 'Bereavement leave', description: 'Time away following a bereavement.', icon: 'heart-outline', attachmentRule: 'never' },
   { id: 'unpaid', label: 'Unpaid leave', description: 'Unpaid time away in this local preview.', icon: 'calendar-clear-outline', attachmentRule: 'never' },
 ] as const;
+
+export const leaveModuleIdentity: ModuleIdentity = { icon: 'sunny-outline', tone: 'warning' };
 
 const leaveEntitlements: Record<LeaveTypeId, number> = {
   annual: 14,

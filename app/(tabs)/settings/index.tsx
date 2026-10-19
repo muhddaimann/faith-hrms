@@ -1,31 +1,30 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
-import { useState } from 'react';
 
 import { AppScreen } from '../../../src/components/shared/appScreen';
-import { LongList } from '../../../src/components/shared/longList';
-import { OptionPicker } from '../../../src/components/shared/optionPicker';
+import { TintedSurface } from '../../../src/components/shared/tintedSurface';
+import { Avatar } from '../../../src/components/tabs/avatar';
+import { SettingsRow } from '../../../src/components/tabs/settingsRow';
 import { ThemeToggle } from '../../../src/components/theme/themeToggle';
-import { useTheme } from '../../../src/hooks/useTheme';
-import { useOverlay } from '../../../src/hooks/useOverlay';
-import { useAuth } from '../../../src/hooks/useAuth';
+import { about } from '../../../src/constants/about';
 import { authFeedback } from '../../../src/constants/auth';
+import { profileModuleIdentity } from '../../../src/constants/profile';
+import { supportModuleIdentity } from '../../../src/constants/support';
+import { useAuth } from '../../../src/hooks/useAuth';
+import { useOverlay } from '../../../src/hooks/useOverlay';
 import { useProfile } from '../../../src/hooks/useProfile';
+import { useSupport } from '../../../src/hooks/useSupport';
+import { useTheme } from '../../../src/hooks/useTheme';
 
 export default function SettingsScreen() {
   const { mode, selectedMode, theme } = useTheme();
   const router = useRouter();
-  const { bottomSheet, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
+  const { destructiveConfirm, showLoader, toast } = useOverlay();
   const { completeSignOut, prepareSignOut } = useAuth();
   const { profile } = useProfile();
-  const [preference, setPreference] = useState('default');
-
-  const openPreferences = () => {
-    bottomSheet({
-      render: () => <OptionPicker mode="preference" onSelect={(value) => { setPreference(value); dismiss(); }} options={[{ value: 'default', label: 'System default', description: 'Keep the standard session setup.' }, { value: 'compact', label: 'Compact updates', description: 'A session-only settings specimen.' }]} selectedValue={preference} title="Display preference" />,
-    });
-  };
+  const { enquiries } = useSupport();
+  const openEnquiries = enquiries.filter((enquiry) => enquiry.status !== 'resolved').length;
 
   const requestLogout = () => {
     destructiveConfirm({
@@ -53,45 +52,37 @@ export default function SettingsScreen() {
   };
 
   return (
-    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<ThemeToggle />} subtitle="Review the active app foundation and session preferences." title="Settings">
+    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<ThemeToggle />} subtitle="Your account and app preferences." title="Settings">
       <View style={{ gap: theme.spacing.lg }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, ...theme.shadow.card }}>
-            <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.md, backgroundColor: theme.colors.primarySoft }}>
-              <Ionicons color={theme.colors.icon} name={mode === 'dark' ? 'moon-outline' : 'sunny-outline'} size={24} />
-            </View>
+        <Pressable accessibilityHint="Views and updates your work profile." accessibilityLabel="Open my profile" accessibilityRole="button" onPress={() => router.push('/settings/profile')} style={({ pressed }) => ({ borderRadius: theme.radius.xl, opacity: pressed ? theme.opacity.pressed : 1, ...theme.shadow.card })}>
+          <TintedSurface contentStyle={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, padding: theme.spacing.lg }} tone={profileModuleIdentity.tone}>
+            <Avatar fullName={profile.fullName} size={56} />
             <View style={{ flex: 1, gap: theme.spacing.xxs }}>
-              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Theme mode: {mode}</Text>
-              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{selectedMode === null ? 'Following device appearance.' : 'Manual session selection is active.'}</Text>
+              <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{profile.preferredName}</Text>
+              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{profile.jobTitle}</Text>
+              <Text style={{ ...theme.typography.label, color: theme.colors.textMuted }}>{profile.department} · {profile.workEmail}</Text>
             </View>
-          </View>
+          </TintedSurface>
+        </Pressable>
 
-          <Pressable accessibilityHint="Views and updates your work profile." accessibilityLabel="Open my profile" accessibilityRole="button" onPress={() => router.push('/settings/profile')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: pressed ? theme.colors.surfaceMuted : theme.colors.surface, padding: theme.spacing.lg, opacity: pressed ? theme.opacity.pressed : 1, ...theme.shadow.card })}>
-            <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.pill, backgroundColor: theme.colors.primary }}>
-              <Ionicons color={theme.colors.textInverse} name="person-outline" size={24} />
-            </View>
-            <View style={{ flex: 1, gap: theme.spacing.xxs }}>
-              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>My profile</Text>
-              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{profile.preferredName} · {profile.jobTitle}</Text>
-            </View>
-            <Ionicons color={theme.colors.iconMuted} name="chevron-forward" size={20} />
-          </Pressable>
-          <Pressable accessibilityHint="Report a bug or share feedback about Faith." accessibilityLabel="Open support" accessibilityRole="button" onPress={() => router.push('/settings/support')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: pressed ? theme.colors.surfaceMuted : theme.colors.surface, padding: theme.spacing.lg, opacity: pressed ? theme.opacity.pressed : 1, ...theme.shadow.card })}>
-            <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.pill, backgroundColor: theme.colors.primary }}>
-              <Ionicons color={theme.colors.textInverse} name="chatbubble-ellipses-outline" size={24} />
-            </View>
-            <View style={{ flex: 1, gap: theme.spacing.xxs }}>
-              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Support</Text>
-              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Report a bug or share feedback</Text>
-            </View>
-            <Ionicons color={theme.colors.iconMuted} name="chevron-forward" size={20} />
-          </Pressable>
-          <Pressable accessibilityLabel="Choose display preference" accessibilityRole="button" onPress={openPreferences} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.borderStrong, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface, opacity: pressed ? theme.opacity.pressed : 1 })}>
-            <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Display preference: {preference === 'default' ? 'System default' : 'Compact updates'}</Text>
-          </Pressable>
-          <Pressable accessibilityLabel="Sign out" accessibilityRole="button" onPress={requestLogout} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.danger, borderRadius: theme.radius.md, backgroundColor: theme.colors.dangerSoft, opacity: pressed ? theme.opacity.pressed : 1 })}>
-            <Text style={{ ...theme.typography.label, color: theme.colors.danger }}>Sign out</Text>
-          </Pressable>
-          <LongList label="Settings foundation item" />
+        <TintedSurface contentStyle={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, padding: theme.spacing.lg }} tone="primary">
+          <View style={{ flex: 1, gap: theme.spacing.xxs }}>
+            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>Appearance</Text>
+            <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>{mode === 'dark' ? 'Dark' : 'Light'} · {selectedMode === null ? 'following device appearance' : 'manual session selection'}</Text>
+          </View>
+          <Ionicons color={theme.colors.primary} name={mode === 'dark' ? 'moon-outline' : 'sunny-outline'} size={30} />
+        </TintedSurface>
+
+        <SettingsRow accessibilityLabel={`Open support, ${openEnquiries} open ${openEnquiries === 1 ? 'enquiry' : 'enquiries'}`} detail={`${openEnquiries} open ${openEnquiries === 1 ? 'enquiry' : 'enquiries'}`} icon={supportModuleIdentity.icon} onPress={() => router.push('/settings/support')} title="Support" tone={supportModuleIdentity.tone} />
+
+        <View style={{ gap: theme.spacing.xxs, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.lg, backgroundColor: theme.colors.surfaceMuted, padding: theme.spacing.md }}>
+          <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Faith {about.version}</Text>
+          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>A local, non-production HR preview. Records reset when the app restarts.</Text>
+        </View>
+
+        <Pressable accessibilityLabel="Sign out" accessibilityRole="button" onPress={requestLogout} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.danger, borderRadius: theme.radius.md, backgroundColor: theme.colors.dangerSoft, opacity: pressed ? theme.opacity.pressed : 1 })}>
+          <Text style={{ ...theme.typography.label, color: theme.colors.danger }}>Sign out</Text>
+        </Pressable>
       </View>
     </AppScreen>
   );

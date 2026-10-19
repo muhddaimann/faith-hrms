@@ -9,7 +9,7 @@ import { AppScreen } from '../../../../src/components/shared/appScreen';
 import { EmptyState } from '../../../../src/components/shared/emptyState';
 import { OptionPicker } from '../../../../src/components/shared/optionPicker';
 import { TabSelector, type TabSelectorTone } from '../../../../src/components/shared/tabSelector';
-import { newsflashPriorityMetadata, type NewsflashItem, type NewsflashPriorityFilter } from '../../../../src/constants/newsflash';
+import { newsflashModuleIdentity, newsflashPriorityMetadata, type NewsflashItem, type NewsflashPriorityFilter } from '../../../../src/constants/newsflash';
 import { useNewsflash } from '../../../../src/hooks/useNewsflash';
 import { useOverlay } from '../../../../src/hooks/useOverlay';
 import { useTheme } from '../../../../src/hooks/useTheme';
@@ -76,7 +76,7 @@ export default function NewsflashScreen() {
         {filteredItems.length === 0 ? (
           <EmptyState
             description={acknowledgementFilter === 'unacknowledged' ? `There are no unacknowledged ${selectedPriority === 'all' ? 'company' : selectedPriority} updates to review right now.` : selectedPriority === 'all' ? 'There are no company updates to review right now.' : `There are no ${selectedPriority} company updates to review right now.`}
-            icon="newspaper-outline"
+            icon={newsflashModuleIdentity.icon}
             title={acknowledgementFilter === 'unacknowledged' ? 'Nothing awaiting acknowledgement' : selectedPriority === 'all' ? 'No company updates' : `No ${selectedPriority} updates`}
           />
         ) : filteredItems.map((item) => <NewsflashCard acknowledged={isAcknowledged(item.id)} item={item} key={item.id} onPress={() => openNewsflash(item)} />)}
