@@ -22,7 +22,7 @@ export default function RoomScreen() {
 
   const openDatePicker = () => {
     customModal({
-      render: () => <DatePicker availableValues={roomFixtureDates} initialMonth={selectedDate} mode="single" onSelect={(date) => dismiss(() => selectDate(date as typeof selectedDate))} selectedValue={selectedDate} subtitle="Choose a day from the local room-booking preview." title="Select a date" />,
+      render: () => <DatePicker availableValues={roomFixtureDates} initialMonth={selectedDate} mode="single" onCancel={() => dismiss()} onConfirm={(date) => dismiss(() => selectDate(date as typeof selectedDate))} selectedValue={selectedDate} subtitle="Choose a day from the local room-booking preview." title="Select a date" />,
     });
   };
 

@@ -18,8 +18,9 @@ export default function HomeScreen() {
       render: () => (
         <OptionPicker
           mode="action"
-          onSelect={(value) => dismiss(() => router.push(value as '/home/newsflash' | '/home/attendance' | '/home/room' | '/home/room/record'))}
+          onSelect={(value) => dismiss(() => router.push(value as '/home/newsflash' | '/home/attendance' | '/home/room' | '/home/room/record' | '/home/leave'))}
           options={[
+            { value: '/home/leave', label: 'Open My leave', description: 'Review local leave balances and submit a fictional leave request.' },
             { value: '/home/room', label: 'Open Room booking', description: 'Choose a local meeting room and 30-minute time slot.' },
             { value: '/home/room/record', label: 'View Room booking records', description: 'Review fictional room bookings from this session.' },
             { value: '/home/attendance', label: 'Open Attendance', description: 'Review local daily, weekly, and monthly attendance previews.' },
@@ -37,9 +38,10 @@ export default function HomeScreen() {
         <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, gap: theme.spacing.sm, ...theme.shadow.card }}>
           <Ionicons color={theme.colors.icon} name="briefcase-outline" size={28} />
           <Text style={{ ...theme.typography.title, color: theme.colors.text }}>Your workday, organized</Text>
-          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Review local attendance, reserve a meeting space preview, and stay current with company updates.</Text>
+          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Manage local leave requests, review attendance, reserve a meeting space preview, and stay current with company updates.</Text>
         </View>
 
+        <ScreenAction label="Open My leave" onPress={() => router.push('/home/leave')} />
         <ScreenAction label="Open Room booking" onPress={() => router.push('/home/room')} />
         <ScreenAction label="View Room booking records" onPress={() => router.push('/home/room/record')} secondary />
         <ScreenAction label="Open Attendance" onPress={() => router.push('/home/attendance')} />

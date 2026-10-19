@@ -127,3 +127,40 @@ src/
     └── useRoom.ts
 advice
 
+Leave Module
+based on app about, design direction
+module where user manage their leave application
+user flow as apply leave, cancel leave, some leaves require attachment, balance etc
+constant to keep types, dummy data etc
+contexts to keep flow, read etc
+hooks to use it globally
+components/leave/ for any widgets related under
+├─ app/
+│  ├─ (tabs)/
+│  │  ├─ home/
+│  │  │  ├─ leave/
+│  │  │  │  ├─ apply.tsx
+│  │  │  │  └─ index.tsx #record
+src/
+├── components/
+│   └── leave/
+├── constants/
+│   └── leave.ts
+├── contexts/
+│   └── leaveContext.ts
+└── hooks/
+    └── useLeave.ts
+advice
+
+LeaveRecordScreen subtitle shorter since showback and rightSlot will uses space
+total redesign LeaveRecordScreen, records first, tabSelector of status pending approved canceled etc
+tapping leave item should useOverlay bottom sheet to view detail/cancel leave
+LeaveApplyScreen need show back, submit button as rightslot instead
+advice
+
+shared/datePicker total redesign
+no need bar drag to dismiss
+no need too much text, range variant should expect one day range (avoid 19 - 19 Oct)
+onPress confirm date then dismiss datePicker instead instant dismiss
+shared/documentPicker for prompting gallery, camer, files
+advice
