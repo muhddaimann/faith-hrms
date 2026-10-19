@@ -2,13 +2,16 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Pressable, Text, View } from 'react-native';
 
 import type { ModuleIcon, ModuleTone } from '../../constants/modules';
+import { seasons, type SeasonId } from '../../constants/season';
 import { useTheme } from '../../hooks/useTheme';
+import { SeasonPreview } from '../season/seasonPreview';
 import { TintedSurface } from './tintedSurface';
 
 export type OptionPickerItem = {
   description?: string;
   icon?: ModuleIcon;
   label: string;
+  preview?: 'season';
   tone?: ModuleTone;
   value: string;
 };
@@ -27,7 +30,9 @@ export function OptionPicker({ mode, onSelect, options, selectedValue, title }: 
 
           const trailing = mode === 'preference'
             ? <Ionicons color={selected ? theme.colors.primary : theme.colors.iconMuted} name={selected ? 'radio-button-on' : 'radio-button-off'} size={22} />
-            : option.icon
+            : option.preview === 'season' && option.value in seasons
+              ? <SeasonPreview season={seasons[option.value as SeasonId]} />
+              : option.icon
               ? <Ionicons color={iconColor} name={option.icon} size={accented ? 30 : 22} />
               : <Ionicons color={theme.colors.iconMuted} name="chevron-forward" size={20} />;
 

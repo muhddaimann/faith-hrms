@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
 import { AppScreen } from '../../../src/components/shared/appScreen';
+import { OptionPicker } from '../../../src/components/shared/optionPicker';
 import { TintedSurface } from '../../../src/components/shared/tintedSurface';
 import { Avatar } from '../../../src/components/tabs/avatar';
 import { SettingsRow } from '../../../src/components/tabs/settingsRow';
@@ -10,20 +11,23 @@ import { ThemeToggle } from '../../../src/components/theme/themeToggle';
 import { about } from '../../../src/constants/about';
 import { authFeedback } from '../../../src/constants/auth';
 import { profileModuleIdentity } from '../../../src/constants/profile';
+import { seasonOptions, type SeasonId } from '../../../src/constants/season';
 import { supportModuleIdentity } from '../../../src/constants/support';
 import { useAuth } from '../../../src/hooks/useAuth';
 import { useOverlay } from '../../../src/hooks/useOverlay';
 import { useProfile } from '../../../src/hooks/useProfile';
+import { useSeason } from '../../../src/hooks/useSeason';
 import { useSupport } from '../../../src/hooks/useSupport';
 import { useTheme } from '../../../src/hooks/useTheme';
 
 export default function SettingsScreen() {
   const { mode, selectedMode, theme } = useTheme();
   const router = useRouter();
-  const { destructiveConfirm, showLoader, toast } = useOverlay();
+  const { bottomSheet, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
   const { completeSignOut, prepareSignOut } = useAuth();
   const { profile } = useProfile();
   const { enquiries } = useSupport();
+  const { season, seasonId, selectSeason } = useSeason();
   const openEnquiries = enquiries.filter((enquiry) => enquiry.status !== 'resolved').length;
 
   const requestLogout = () => {
@@ -51,6 +55,20 @@ export default function SettingsScreen() {
     });
   };
 
+  const openSeasonPicker = () => {
+    bottomSheet({
+      render: () => (
+        <OptionPicker
+          mode="preference"
+          onSelect={(value) => dismiss(() => selectSeason(value as SeasonId))}
+          options={seasonOptions.map((option) => ({ value: option.id, label: option.label, description: option.description, icon: option.icon, preview: 'season' as const }))}
+          selectedValue={seasonId}
+          title="Seasonal appearance"
+        />
+      ),
+    });
+  };
+
   return (
     <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<ThemeToggle />} subtitle="Your account and app preferences." title="Settings">
       <View style={{ gap: theme.spacing.lg }}>
@@ -72,6 +90,8 @@ export default function SettingsScreen() {
           </View>
           <Ionicons color={theme.colors.primary} name={mode === 'dark' ? 'moon-outline' : 'sunny-outline'} size={30} />
         </TintedSurface>
+
+        <SettingsRow accessibilityLabel={`Open seasonal appearance. ${season.label} is selected for this session.`} detail={`${season.label} · session only`} icon={season.icon} onPress={openSeasonPicker} title="Seasonal appearance" tone="primary" />
 
         <SettingsRow accessibilityLabel={`Open support, ${openEnquiries} open ${openEnquiries === 1 ? 'enquiry' : 'enquiries'}`} detail={`${openEnquiries} open ${openEnquiries === 1 ? 'enquiry' : 'enquiries'}`} icon={supportModuleIdentity.icon} onPress={() => router.push('/settings/support')} title="Support" tone={supportModuleIdentity.tone} />
 

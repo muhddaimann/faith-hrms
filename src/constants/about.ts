@@ -3,9 +3,13 @@ export const about = {
   appAbout: 'HRMS in your pocket',
   slug: 'faith-hrms',
   scheme: 'faith',
-  version: '0.11.0',
+  version: '0.12.0',
   designDirection: 'Modern purple, calm, and trustworthy workplace companion.',
   changelog: [
+    {
+      version: '0.12.0',
+      summary: 'Refined shared screen headers and added Home-only seasonal pull-to-refresh feedback.',
+    },
     {
       version: '0.11.0',
       summary: 'Added Pending & upcoming local reminders with direct navigation to related Faith modules.',

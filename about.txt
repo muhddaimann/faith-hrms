@@ -250,3 +250,13 @@ HomeScreen rightSlot
 idea is to have another pressable just for pending module, with indicator no need number
 every pending item no need to oepn useOverlay sheet, if profile route to /profile etc
 advice
+
+season module
+based on app about, design direction
+chinese new year, hari raya aidilfitri, merdeka day, deepavali, default
+module where maybe constants/theme got changes accordingly if set tenure
+advice related app/, src/
+
+AppScreen UI UX revise
+refresh control feature
+advice

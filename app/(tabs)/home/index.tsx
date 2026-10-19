@@ -1,12 +1,12 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { AnnouncementCarousel } from '../../../src/components/announcement/announcementCarousel';
 import { AnnouncementDetail } from '../../../src/components/announcement/announcementDetail';
 import { AppScreen } from '../../../src/components/shared/appScreen';
 import { OptionPicker } from '../../../src/components/shared/optionPicker';
-import { TintedSurface } from '../../../src/components/shared/tintedSurface';
 import { Avatar } from '../../../src/components/tabs/avatar';
 import { HomeHeader } from '../../../src/components/tabs/homeHeader';
 import { ModuleCard } from '../../../src/components/tabs/moduleCard';
@@ -26,6 +26,7 @@ import { useNewsflash } from '../../../src/hooks/useNewsflash';
 import { useOverlay } from '../../../src/hooks/useOverlay';
 import { useProfile } from '../../../src/hooks/useProfile';
 import { useRoom } from '../../../src/hooks/useRoom';
+import { useSeason } from '../../../src/hooks/useSeason';
 import { useSupport } from '../../../src/hooks/useSupport';
 import { useTheme } from '../../../src/hooks/useTheme';
 
@@ -42,16 +43,44 @@ type OverviewCard = {
   tone?: ModuleTone;
 };
 
+const homeRefreshDurationMs = 1_000;
+
 export default function HomeScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const [refreshing, setRefreshing] = useState(false);
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { completeSignOut, prepareSignOut } = useAuth();
   const { bottomSheet, customModal, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
   const { dailyRecord } = useAttendance();
   const { applications, balances } = useLeave();
   const { bookings, getAvailabilityCount, rooms, selectedDate } = useRoom();
   const { isAcknowledged, items } = useNewsflash();
+  const { season } = useSeason();
   const { enquiries } = useSupport();
+
+  useEffect(() => () => {
+    if (refreshTimer.current) {
+      clearTimeout(refreshTimer.current);
+    }
+  }, []);
+
+  const refreshDashboard = () => {
+    if (refreshing) {
+      return;
+    }
+
+    setRefreshing(true);
+    refreshTimer.current = setTimeout(() => {
+      setRefreshing(false);
+      refreshTimer.current = null;
+      toast({
+        tone: 'info',
+        title: `${season.label} view refreshed`,
+        message: 'Your local Home overview reflects the current seasonal appearance.',
+      });
+    }, homeRefreshDurationMs);
+  };
 
   const attendanceMeta = dailyRecord ? attendanceStatusMetadata[dailyRecord.status] : null;
   const attendanceDetail = dailyRecord?.actualIn && dailyRecord.actualOut
@@ -134,7 +163,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<HomeHeaderActions onOpenActions={openActions} onOpenPending={() => router.push('/home/pending')} />} subtitle="Your workday at a glance." title="Home">
+    <AppScreen eyebrow="FAITH HRMS" onRefresh={refreshDashboard} refreshing={refreshing} reserveFloatingControls rightSlot={<HomeHeaderActions onOpenActions={openActions} onOpenPending={() => router.push('/home/pending')} />} subtitle="Your workday at a glance." title="Home">
       <View style={{ gap: theme.spacing.lg }}>
         <HomeHeader />
         <View accessibilityLabel="Module overview" accessibilityRole="summary" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md }}>

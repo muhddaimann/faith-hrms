@@ -87,6 +87,13 @@ export const themes = {
       danger: '#FCA5A5', dangerSoft: '#4C1D2A', info: '#93C5FD', infoSoft: '#193A5E',
     },
   },
-} as const;
+};
 
-export type Theme = (typeof themes)[ThemeMode];
+export type ThemeColors = {
+  [ColorName in keyof (typeof themes)['light']['colors']]: string;
+};
+
+export type Theme = Omit<(typeof themes)['light'], 'colors' | 'mode'> & {
+  colors: ThemeColors;
+  mode: ThemeMode;
+};

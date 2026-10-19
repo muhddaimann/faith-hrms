@@ -89,18 +89,18 @@ export function AppScreen({ children, eyebrow, onBack, onRefresh, refreshing = f
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <Animated.View style={{ flex: 1, transform: [{ translateY }] }}>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.xl, paddingBottom: reserveFloatingControls ? layout.floatingStageHeight + theme.spacing.xxl : theme.spacing.xl, gap: theme.spacing.lg }}
+          contentContainerStyle={{ paddingHorizontal: theme.spacing.lg, paddingTop: theme.spacing.xl, paddingBottom: reserveFloatingControls ? layout.floatingStageHeight + theme.spacing.xxxl : theme.spacing.xxl, gap: theme.spacing.lg }}
           decelerationRate="normal"
           onScroll={handleScroll}
-          refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} /> : undefined}
+          refreshControl={onRefresh ? <RefreshControl colors={[theme.colors.primary]} onRefresh={onRefresh} progressBackgroundColor={theme.colors.surface} refreshing={refreshing} tintColor={theme.colors.primary} /> : undefined}
           ref={scrollRef}
           scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
           style={{ flex: 1, backgroundColor: theme.colors.background }}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'stretch', gap: theme.spacing.md }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.md }}>
             {onBack ? (
-              <View style={{ justifyContent: 'center' }}>
+              <View style={{ flexShrink: 0, paddingTop: eyebrow ? 20 : 0 }}>
                 <Animated.View style={{ transform: [{ scale: backScale }] }}>
                   <Pressable
                     accessibilityLabel="Go back"
@@ -115,12 +115,16 @@ export function AppScreen({ children, eyebrow, onBack, onRefresh, refreshing = f
                 </Animated.View>
               </View>
             ) : null}
-            <View style={{ flex: 1, gap: theme.spacing.xs }}>
+            <View style={{ flex: 1, minWidth: 0, gap: theme.spacing.xs }}>
               {eyebrow ? <Text style={{ ...theme.typography.eyebrow, color: theme.colors.primary }}>{eyebrow}</Text> : null}
-              <Text style={{ ...theme.typography.title, fontSize: 24, lineHeight: 30, letterSpacing: -0.5, color: theme.colors.text }}>{title}</Text>
+              <Text accessibilityRole="header" style={{ ...theme.typography.title, fontSize: 24, lineHeight: 30, letterSpacing: -0.5, color: theme.colors.text }}>{title}</Text>
               {subtitle ? <Text style={{ ...theme.typography.body, fontSize: 14, lineHeight: 20, color: theme.colors.textSecondary }}>{subtitle}</Text> : null}
             </View>
-            {rightSlot ? <View style={{ justifyContent: 'center' }}>{rightSlot}</View> : null}
+            {rightSlot ? (
+              <View style={{ flexShrink: 0, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs }}>
+                {rightSlot}
+              </View>
+            ) : null}
           </View>
           {children}
         </ScrollView>

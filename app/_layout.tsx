@@ -6,6 +6,7 @@ import { useEffect, useRef } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemeProvider } from '../src/contexts/themeContext';
+import { SeasonProvider } from '../src/contexts/seasonContext';
 import { OverlayProvider } from '../src/contexts/overlayProvider';
 import { BarProvider } from '../src/contexts/barContext';
 import { AuthProvider } from '../src/contexts/authContext';
@@ -31,8 +32,9 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <AuthProvider>
+      <SeasonProvider>
+        <ThemeProvider>
+          <AuthProvider>
           <ProfileProvider>
             <NewsflashProvider>
               <AttendanceProvider>
@@ -50,8 +52,9 @@ export default function RootLayout() {
               </AttendanceProvider>
             </NewsflashProvider>
           </ProfileProvider>
-        </AuthProvider>
-      </ThemeProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </SeasonProvider>
     </SafeAreaProvider>
   );
 }
