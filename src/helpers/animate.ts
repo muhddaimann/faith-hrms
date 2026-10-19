@@ -33,6 +33,9 @@ export const toastExit = (opacity: Animated.Value, translateY: Animated.Value) =
     Animated.timing(translateY, { toValue: -12, duration: 180, useNativeDriver: true }),
   ]);
 
+export const announcementProgress = (value: Animated.Value, duration: number) =>
+  Animated.timing(value, { toValue: 1, duration, useNativeDriver: false });
+
 export const sheetEnter = (translateY: Animated.Value) =>
   Animated.spring(translateY, { toValue: 0, useNativeDriver: true, speed: 15, bounciness: 2 });
 

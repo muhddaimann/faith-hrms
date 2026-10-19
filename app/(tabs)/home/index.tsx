@@ -1,13 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
-import { Pressable, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
+import { AnnouncementCarousel } from '../../../src/components/announcement/announcementCarousel';
+import { AnnouncementDetail } from '../../../src/components/announcement/announcementDetail';
 import { AppScreen } from '../../../src/components/shared/appScreen';
 import { OptionPicker } from '../../../src/components/shared/optionPicker';
 import { Avatar } from '../../../src/components/tabs/avatar';
 import { HomeHeader } from '../../../src/components/tabs/homeHeader';
 import { ModuleCard } from '../../../src/components/tabs/moduleCard';
 import { attendanceModuleIdentity, attendanceStatusMetadata } from '../../../src/constants/attendance';
+import { announcementItems, type AnnouncementItem } from '../../../src/constants/announcement';
 import { authFeedback, authSignOutIdentity } from '../../../src/constants/auth';
 import { leaveModuleIdentity } from '../../../src/constants/leave';
 import type { ModuleIcon, ModuleTone } from '../../../src/constants/modules';
@@ -42,7 +45,7 @@ export default function HomeScreen() {
   const { theme } = useTheme();
   const router = useRouter();
   const { completeSignOut, prepareSignOut } = useAuth();
-  const { customModal, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
+  const { bottomSheet, customModal, destructiveConfirm, dismiss, showLoader, toast } = useOverlay();
   const { dailyRecord } = useAttendance();
   const { applications, balances } = useLeave();
   const { bookings, getAvailabilityCount, rooms, selectedDate } = useRoom();
@@ -125,12 +128,23 @@ export default function HomeScreen() {
     });
   };
 
+  const openAnnouncement = (item: AnnouncementItem) => {
+    bottomSheet({ render: () => <AnnouncementDetail item={item} /> });
+  };
+
   return (
     <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<AvatarAction onPress={openActions} />} subtitle="Your workday at a glance." title="Home">
       <View style={{ gap: theme.spacing.lg }}>
         <HomeHeader />
         <View accessibilityLabel="Module overview" accessibilityRole="summary" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md }}>
           {cards.map((card) => <ModuleCard accessibilityLabel={card.accessibilityLabel} detail={card.detail} icon={card.icon} key={card.key} metric={card.metric} onPress={() => router.push(card.route)} title={card.title} tone={card.tone} />)}
+        </View>
+        <View accessibilityLabel="Announcements" style={{ gap: theme.spacing.md }}>
+          <View style={{ gap: theme.spacing.xxs }}>
+            <Text style={{ ...theme.typography.title, fontSize: 24, lineHeight: 30, letterSpacing: -0.5, color: theme.colors.text }}>Announcements</Text>
+            <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>A closer look at what is happening around Faith.</Text>
+          </View>
+          <AnnouncementCarousel items={announcementItems} onPressAnnouncement={openAnnouncement} />
         </View>
       </View>
     </AppScreen>

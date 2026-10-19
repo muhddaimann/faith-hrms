@@ -204,3 +204,24 @@ advice
 
 HomeScreen updated, update SettingsScreen too
 advice
+
+Annoucement Module
+based on app about, design direction
+module that almost like newsflash, but it no need pages.
+just components to display announcement, onPress enlarge image/ useOverlay bottom sheet see more
+idea is user see 2 anouncement on HomeScreen, onPress useOverlay sheet to view more about recruitement bonus, image placeholder mobile Faith
+does it need all components/ - hooks too as other?
+src/
+├── components/
+│   └── announcement/
+├── constants/
+│   └── announcement.ts
+├── contexts/
+│   └── announcementContext.tsx
+└── hooks/
+    └── useAnnouncement.ts
+advice
+
+Pending Module
+based on app about, design direction
+module where user 

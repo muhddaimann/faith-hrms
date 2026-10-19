@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.9.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` (including the lockfile) and Expo config version.
+- **Version policy:** The current version is `0.10.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` (including the lockfile) and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -554,3 +554,11 @@ Do not make changes.
 - **Dialog bounds:** Custom-modal content renders inside a bounded `ScrollView` (`overlayLayout.dialogVerticalPadding`) with `keyboardShouldPersistTaps="handled"`, so tall content scrolls instead of clipping.
 - **Dependency:** `expo-linear-gradient` is an approved Expo dependency. Gradient behavior requires verification in a rebuilt iOS/Android development build or binary.
 - **Validation:** Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual light/dark gradient and icon contrast, card-height parity, large-text and narrow-width wrapping, dialog scroll/clip, iOS shadow visibility, preference-picker parity, and navigation.
+
+### Feature — Announcement Module
+
+- **Announcement boundary:** Faith provides two local, fictional Home announcements: a recruitment referral-bonus spotlight and a Faith Mobile placeholder. They are not a production communications system, HR policy, referral-payment program, recruitment source of truth, release announcement, backend integration, notification service, or analytics surface.
+- **Home presentation:** Home renders one token-driven announcement carousel beneath the module dashboard. It fades between the two fixtures every three seconds, uses a single progress bar as the only rotation indicator, and displays compact eyebrow, title, summary, and a right-side themed Ionicon. Carousel state and timer/animation cleanup are component-local and session-only.
+- **Detail behavior:** Tapping the active announcement opens the existing typed global bottom sheet. The detail uses a wide tinted icon header with the fixture’s larger themed Ionicon plus full local copy and the fictional-content boundary. Sheet dismissal paths have no mutation or follow-up side effects.
+- **Architecture:** `src/constants/announcement.ts` owns typed immutable fixtures using the shared `ModuleIcon` and `ModuleTone` types. `announcementCarousel.tsx` and `announcementDetail.tsx` are the only feature components; no announcement route, provider, hook, persistence, dependency, Expo configuration, remote image, API, or backend behavior exists.
+- **Validation:** Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual carousel rotation/progress reset, light/dark contrast, narrow-width and large-text wrapping, bottom-sheet details/dismissal, and timer cleanup after leaving Home.
