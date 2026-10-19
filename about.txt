@@ -48,3 +48,32 @@ src/
     └── useProfile.ts
 advice
 
+Newsflash Module
+based on app about, design direction
+module of where user get updated with company updates as Human Resource3 days ago
+Workplace Security, Professional Conduct & Responsible Use of Company Resources
+By Kisuntha A/P Sundarason · 15 Oct 2026 · Expires 31 Dec 2036
+Payroll 5 days ago
+Memo Special PH Silver Jubilee Sultan Selangor
+By Kisuntha A/P Sundarason · 13 Oct 2026 · Expires 25 Nov 2026
+onPress Newsflash item useOverlay bottom sheet acknwledge button
+replace home/demo/ as home/newsflash/
+constant to keep types, dummy data etc
+contexts to keep flow, read, update etc
+hooks to use it globally
+components/profile for any widgets related under
+├─ app/
+│  ├─ (tabs)/
+│  │  ├─ home/
+│  │  │  ├─ newsflash/
+│  │  │  │  └─ index.tsx
+src/
+├── components/
+│   └── newsflash/
+├── constants/
+│   └── newsflash.ts
+├── contexts/
+│   └── newsflashContext.ts
+└── hooks/
+    └── useNewsflash.ts
+advice

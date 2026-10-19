@@ -10,6 +10,7 @@ import { OverlayProvider } from '../src/contexts/overlayProvider';
 import { BarProvider } from '../src/contexts/barContext';
 import { AuthProvider } from '../src/contexts/authContext';
 import { ProfileProvider } from '../src/contexts/profileContext';
+import { NewsflashProvider } from '../src/contexts/newsflashContext';
 import { OverlayHost } from '../src/components/overlay/overlayHost';
 import { useTheme } from '../src/hooks/useTheme';
 import { useOverlay } from '../src/hooks/useOverlay';
@@ -29,11 +30,13 @@ export default function RootLayout() {
       <ThemeProvider>
         <AuthProvider>
           <ProfileProvider>
-            <BarProvider>
-              <OverlayProvider>
-                {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
-              </OverlayProvider>
-            </BarProvider>
+            <NewsflashProvider>
+              <BarProvider>
+                <OverlayProvider>
+                  {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
+                </OverlayProvider>
+              </BarProvider>
+            </NewsflashProvider>
           </ProfileProvider>
         </AuthProvider>
       </ThemeProvider>

@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, BackHandler, Modal, PanResponder, Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Animated, BackHandler, Modal, PanResponder, Pressable, ScrollView, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { overlayLayout } from '../../constants/overlay';
@@ -13,7 +13,7 @@ type OverlayHostProps = OverlayHostState;
 export function OverlayHost({ overlay, toast, completeOverlayAfterExit, dismissOverlay, dismissToast }: OverlayHostProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const [renderedOverlay, setRenderedOverlay] = useState<OverlayState | null>(overlay);
   const [renderedToast, setRenderedToast] = useState<ToastState | null>(toast);
   const overlayOpacity = useRef(new Animated.Value(0)).current;
@@ -66,6 +66,7 @@ export function OverlayHost({ overlay, toast, completeOverlayAfterExit, dismissO
   }, [dialogScale, overlay, overlayOpacity, renderedOverlay, sheetTranslateY]);
 
   const isSheet = overlay?.kind === 'bottomSheet';
+  const sheetMaxHeight = Math.max(0, height - insets.top - overlayLayout.sheetViewportInset);
   const sheetBackdropOpacity = sheetTranslateY.interpolate({
     inputRange: [0, Math.max(sheetHeight, 1)],
     outputRange: [1, 0],
@@ -208,12 +209,12 @@ export function OverlayHost({ overlay, toast, completeOverlayAfterExit, dismissO
                       setSheetHeight((currentHeight) => currentHeight === nextHeight ? currentHeight : nextHeight);
                     }}
                     style={{
+                      maxHeight: sheetMaxHeight,
                       borderTopWidth: 1,
                       borderTopColor: theme.colors.border,
                       borderTopLeftRadius: theme.radius.xl,
                       borderTopRightRadius: theme.radius.xl,
                       backgroundColor: theme.colors.surface,
-                      paddingBottom: insets.bottom + theme.spacing.md,
                       transform: [{ translateY: sheetTranslateY }],
                     }}
                   >
@@ -226,7 +227,14 @@ export function OverlayHost({ overlay, toast, completeOverlayAfterExit, dismissO
                     >
                       <Animated.View style={{ opacity: sheetBackdropOpacity, width: 40, height: 4, borderRadius: theme.radius.pill, backgroundColor: theme.colors.borderStrong }} />
                     </View>
-                    <View style={{ paddingHorizontal: theme.spacing.lg }}>{renderedOverlay.render?.()}</View>
+                    <ScrollView
+                      bounces
+                      contentContainerStyle={{ gap: theme.spacing.lg, paddingHorizontal: theme.spacing.lg, paddingBottom: insets.bottom + overlayLayout.sheetContentBottomSpacing }}
+                      keyboardShouldPersistTaps="handled"
+                      showsVerticalScrollIndicator={false}
+                    >
+                      {renderedOverlay.render?.()}
+                    </ScrollView>
                   </Animated.View>
                 </View>
               ) : (

@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.3.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.4.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -488,3 +488,13 @@ Do not make changes.
 - **Update lifecycle:** Edit within the approved custom modal. Invalid drafts show a warning toast and remain unsaved. Valid drafts close the modal, display a one-second blocking update loader, then apply the in-memory update and success toast after loader exit.
 - **Profile UI:** Use reusable profile header and information-card components with themed Ionicons and accessible 48-point controls. The Profile header exposes the edit control as a right-slot action, and the compact shared `AppScreen` header uses a 24/30 title and 14/20 subtitle with vertically centered right-slot actions.
 - **Dependencies and validation:** Profile added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual profile editing, cancellation, loader/toast sequencing, nested-route bar visibility, keyboard, large-text, and light/dark behavior.
+
+### Feature — Newsflash Module
+
+- **Newsflash boundary:** Faith provides local, fixture-based company announcements. It is not a production announcement service, HR communications source of truth, delivery system, or backend-integrated acknowledgement record.
+- **Route and navigation:** Replace the temporary `/home/demo` route with `/home/newsflash`. The Newsflash route is protected by the authenticated tabs boundary, renders full-screen without the floating tab bar, and returns to `/home` with replacement navigation.
+- **State and persistence:** `NewsflashProvider` and `useNewsflash()` own typed local announcements and acknowledgement state. Acknowledgements are session-only, reset on restart, and are not sent to or synchronized with a backend.
+- **Filtering and presentation:** The Newsflash screen provides a session-only All/Unacknowledged header filter and All, Important, Critical, and Normal priority tabs. Filters combine. Selected priority tabs use semantic primary, warning, danger, and info colors respectively; announcement badges use the matching semantic priority colors.
+- **Detail and acknowledgement lifecycle:** Announcement details open in the global bottom sheet. Acknowledging an item dismisses the sheet first, then marks it acknowledged and presents a success toast after the approved dismiss lifecycle completes. Cancellation paths do not acknowledge an item.
+- **Scrollable sheet behavior:** Global bottom sheets cap their height within the viewport and render their content in a scroll view. The drag gesture remains restricted to the dedicated 44-point handle, and content preserves keyboard interaction plus bottom safe-area clearance.
+- **Dependencies and validation:** Newsflash added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual filtering, acknowledgement, sheet scrolling, narrow-width, large-text, light/dark, and iOS/Android behavior.

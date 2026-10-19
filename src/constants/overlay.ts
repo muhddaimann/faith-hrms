@@ -6,6 +6,8 @@ export const overlayLayout = {
   sheetHandleHeight: 44,
   sheetEntryDuration: 260,
   sheetExitDuration: 220,
+  sheetContentBottomSpacing: 24,
   sheetOverscrollResistance: 0.28,
+  sheetViewportInset: 24,
   toastDuration: 3600,
 } as const;
