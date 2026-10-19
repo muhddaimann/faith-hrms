@@ -224,4 +224,29 @@ advice
 
 Pending Module
 based on app about, design direction
-module where user 
+module where centralize user actions but no need to link with current others module yet
+user should see rows of pending profile completetion, pending newsflash to acknowledge, upcoming room booking, upcoming approved leave, review submitted support, upcoming public holiday, upcoming birthday, work tenure almost years
+constant to keep types, dummy data etc
+contexts to keep flow, route where etc
+hooks to use it globally
+components/pending/ for any widgets related under
+├─ app/
+│  ├─ (tabs)/
+│  │  ├─ home/
+│  │  │  ├─ pending/
+│  │  │  │  └─ index.tsx
+src/
+├── components/
+│   └── pending/
+├── constants/
+│   └── pending.ts
+├── contexts/
+│   └── pendingContext.tsx
+└── hooks/
+    └── usePending.ts
+advice
+
+HomeScreen rightSlot
+idea is to have another pressable just for pending module, with indicator no need number
+every pending item no need to oepn useOverlay sheet, if profile route to /profile etc
+advice

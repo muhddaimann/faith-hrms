@@ -6,6 +6,7 @@ import { AnnouncementCarousel } from '../../../src/components/announcement/annou
 import { AnnouncementDetail } from '../../../src/components/announcement/announcementDetail';
 import { AppScreen } from '../../../src/components/shared/appScreen';
 import { OptionPicker } from '../../../src/components/shared/optionPicker';
+import { TintedSurface } from '../../../src/components/shared/tintedSurface';
 import { Avatar } from '../../../src/components/tabs/avatar';
 import { HomeHeader } from '../../../src/components/tabs/homeHeader';
 import { ModuleCard } from '../../../src/components/tabs/moduleCard';
@@ -133,7 +134,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<AvatarAction onPress={openActions} />} subtitle="Your workday at a glance." title="Home">
+    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<HomeHeaderActions onOpenActions={openActions} onOpenPending={() => router.push('/home/pending')} />} subtitle="Your workday at a glance." title="Home">
       <View style={{ gap: theme.spacing.lg }}>
         <HomeHeader />
         <View accessibilityLabel="Module overview" accessibilityRole="summary" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md }}>
@@ -148,6 +149,26 @@ export default function HomeScreen() {
         </View>
       </View>
     </AppScreen>
+  );
+}
+
+function HomeHeaderActions({ onOpenActions, onOpenPending }: { onOpenActions: () => void; onOpenPending: () => void }) {
+  const { theme } = useTheme();
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs }}>
+      <Pressable
+        accessibilityHint="Opens Pending and upcoming reminders."
+        accessibilityLabel="Open Pending and upcoming. Items need review."
+        accessibilityRole="button"
+        onPress={onOpenPending}
+        style={({ pressed }) => ({ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.pill, backgroundColor: pressed ? theme.colors.warningSoft : theme.colors.surface, opacity: pressed ? theme.opacity.pressed : 1 })}
+      >
+        <Ionicons color={theme.colors.warning} name="time-outline" size={22} />
+        <View accessible={false} style={{ position: 'absolute', top: 9, right: 9, width: 8, height: 8, borderWidth: 1.5, borderColor: theme.colors.surface, borderRadius: theme.radius.pill, backgroundColor: theme.colors.warning }} />
+      </Pressable>
+      <AvatarAction onPress={onOpenActions} />
+    </View>
   );
 }
 
