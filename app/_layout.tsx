@@ -14,6 +14,7 @@ import { NewsflashProvider } from '../src/contexts/newsflashContext';
 import { AttendanceProvider } from '../src/contexts/attendanceContext';
 import { RoomProvider } from '../src/contexts/roomContext';
 import { LeaveProvider } from '../src/contexts/leaveContext';
+import { SupportProvider } from '../src/contexts/supportContext';
 import { OverlayHost } from '../src/components/overlay/overlayHost';
 import { useTheme } from '../src/hooks/useTheme';
 import { useOverlay } from '../src/hooks/useOverlay';
@@ -37,11 +38,13 @@ export default function RootLayout() {
               <AttendanceProvider>
                 <RoomProvider>
                   <LeaveProvider>
-                    <BarProvider>
-                      <OverlayProvider>
-                        {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
-                      </OverlayProvider>
-                    </BarProvider>
+                    <SupportProvider>
+                      <BarProvider>
+                        <OverlayProvider>
+                          {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
+                        </OverlayProvider>
+                      </BarProvider>
+                    </SupportProvider>
                   </LeaveProvider>
                 </RoomProvider>
               </AttendanceProvider>

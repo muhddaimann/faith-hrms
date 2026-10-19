@@ -75,6 +75,16 @@ export default function SettingsScreen() {
             </View>
             <Ionicons color={theme.colors.iconMuted} name="chevron-forward" size={20} />
           </Pressable>
+          <Pressable accessibilityHint="Report a bug or share feedback about Faith." accessibilityLabel="Open support" accessibilityRole="button" onPress={() => router.push('/settings/support')} style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: pressed ? theme.colors.surfaceMuted : theme.colors.surface, padding: theme.spacing.lg, opacity: pressed ? theme.opacity.pressed : 1, ...theme.shadow.card })}>
+            <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.pill, backgroundColor: theme.colors.primary }}>
+              <Ionicons color={theme.colors.textInverse} name="chatbubble-ellipses-outline" size={24} />
+            </View>
+            <View style={{ flex: 1, gap: theme.spacing.xxs }}>
+              <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Support</Text>
+              <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Report a bug or share feedback</Text>
+            </View>
+            <Ionicons color={theme.colors.iconMuted} name="chevron-forward" size={20} />
+          </Pressable>
           <Pressable accessibilityLabel="Choose display preference" accessibilityRole="button" onPress={openPreferences} style={({ pressed }) => ({ minHeight: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.borderStrong, borderRadius: theme.radius.md, backgroundColor: theme.colors.surface, opacity: pressed ? theme.opacity.pressed : 1 })}>
             <Text style={{ ...theme.typography.label, color: theme.colors.text }}>Display preference: {preference === 'default' ? 'System default' : 'Compact updates'}</Text>
           </Pressable>

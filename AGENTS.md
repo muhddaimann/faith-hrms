@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.7.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.8.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` (including the lockfile) and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -469,6 +469,7 @@ Do not make changes.
 - **Floating-control ownership:** `BarProvider` coordinates only the focused screen's registered scroll controller. Root Home and Settings routes hand off between the floating tab pill at rest and a centered scroll-to-top action after scroll-direction hysteresis; nested routes never show the tab pill and may show only scroll-to-top.
 - **Picker and overlay behavior:** Home action choices use the typed custom-modal overlay and navigate only after the single-safe dismissal completion. Settings preferences use the typed bottom sheet, remain session-only, and dismiss after a selection. Backdrop and hardware-back dismissal do not trigger selection actions.
 - **Navigation and platform behavior:** Shared controls remain bottom-inset-aware, use a fixed fade-only control stage, prevent interaction while fading out, and preserve the approved no-route-animation policy.
+- **Tab selector:** Content tab strips (Leave status, Support status, Newsflash priority, Attendance view) render the shared `src/components/shared/tabSelector.tsx` directly from their screens; no per-module tab wrapper components exist. `TabSelector` applies a 72-point minimum tab width and an optional `scrollable` mode that wraps the row in a horizontal scroll view with token spacing and even distribution.
 - **Feature readiness:** Phase 5 is approved. Faith is ready to use the one-at-a-time `Idea to Feature` workflow for product feature slices.
 
 ### Feature — Auth Module
@@ -527,3 +528,12 @@ Do not make changes.
 - **Attachment boundary:** Supporting-document selection uses the shared `DocumentPicker` with Photo library, Camera, and Files sources. The source sheet dismisses before native permissions or pickers open. Native picker cancellation leaves the draft unchanged; permission denial or picker failures surface a warning toast. Store only session-only attachment metadata—filename, source, optional MIME type, and optional size—never a URI, the file contents, uploads, or persistent storage.
 - **Native configuration:** `expo-image-picker` and `expo-document-picker` are approved dependencies. Expo config includes image-library and camera permission strings plus the document-picker plugin. Native permission behavior requires verification in a rebuilt iOS/Android development build or binary.
 - **Validation:** Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual local leave submission, date confirmation/cancellation, same-day range display, attachment-source dismissal sequencing, permission/cancellation/error behavior, metadata display/removal, light/dark, narrow-width, large-text, and iOS/Android behavior.
+
+### Feature — Support Module
+
+- **Support boundary:** Faith provides local, fictional support enquiries. It is not a production support desk, ticket system, SLA, agent reply thread, or backend-integrated communications record.
+- **Route and navigation:** Support is an authenticated nested Settings route at `/settings/support`, with a local enquiry form at `/settings/support/apply`. Both use the shared screen foundation, hide the root tab pill, and return to `/settings` without route animation.
+- **State and persistence:** `SupportProvider` and `useSupport()` own typed local enquiries in memory only. New enquiries are `submitted`; fixtures cover submitted, in review, and resolved states. All enquiry data resets on restart and is neither persisted nor transmitted.
+- **Submission lifecycle:** Enquiry type selection uses the typed bottom sheet. A valid draft is created as a `submitted` enquiry after a one-second blocking loader; invalid drafts show a warning toast and remain unsaved. Cancellation and dismissal paths do not create enquiries.
+- **Attachment boundary:** Screenshot/file selection uses the shared `DocumentPicker`. Only session-only attachment metadata—filename, source, optional MIME type, and optional size—is kept; never a URI, file contents, uploads, or persistent storage.
+- **Validation:** Support added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual type/validation, attachment-source sequencing, loader/toast ordering, status filtering, detail sheet, narrow-width, large-text, light/dark, and iOS/Android behavior.

@@ -5,14 +5,24 @@ import { Pressable, View } from 'react-native';
 
 import { NewsflashCard } from '../../../../src/components/newsflash/newsflashCard';
 import { NewsflashDetail } from '../../../../src/components/newsflash/newsflashDetail';
-import { NewsflashPriorityTabs } from '../../../../src/components/newsflash/newsflashPriorityTabs';
 import { AppScreen } from '../../../../src/components/shared/appScreen';
 import { EmptyState } from '../../../../src/components/shared/emptyState';
-import { type NewsflashItem, type NewsflashPriorityFilter } from '../../../../src/constants/newsflash';
 import { OptionPicker } from '../../../../src/components/shared/optionPicker';
+import { TabSelector, type TabSelectorTone } from '../../../../src/components/shared/tabSelector';
+import { newsflashPriorityMetadata, type NewsflashItem, type NewsflashPriorityFilter } from '../../../../src/constants/newsflash';
 import { useNewsflash } from '../../../../src/hooks/useNewsflash';
 import { useOverlay } from '../../../../src/hooks/useOverlay';
 import { useTheme } from '../../../../src/hooks/useTheme';
+
+const newsflashPriorities: readonly NewsflashPriorityFilter[] = ['all', 'important', 'critical', 'normal'];
+
+const newsflashPriorityTones: Record<NewsflashPriorityFilter, TabSelectorTone> = {
+  all: 'primary',
+  critical: 'danger',
+  important: 'warning',
+  normal: 'info',
+};
+
 
 export default function NewsflashScreen() {
   const router = useRouter();
@@ -61,7 +71,7 @@ export default function NewsflashScreen() {
   return (
     <AppScreen eyebrow="COMPANY UPDATES" onBack={() => router.replace('/home')} rightSlot={<AcknowledgementFilterButton filter={acknowledgementFilter} onPress={openAcknowledgementFilter} />} subtitle="Important updates from Faith." title="Newsflash">
       <View style={{ gap: theme.spacing.lg }}>
-        <NewsflashPriorityTabs onSelect={setSelectedPriority} selectedPriority={selectedPriority} />
+        <TabSelector accessibilityLabel="Newsflash priority" items={newsflashPriorities.map((priority) => ({ accessibilityLabel: priority === 'all' ? 'All company updates' : `${newsflashPriorityMetadata[priority].label} priority updates`, label: priority === 'all' ? 'All' : newsflashPriorityMetadata[priority].label, tone: newsflashPriorityTones[priority], value: priority }))} onSelect={setSelectedPriority} scrollable selectedValue={selectedPriority} />
 
         {filteredItems.length === 0 ? (
           <EmptyState

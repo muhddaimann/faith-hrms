@@ -3,9 +3,13 @@ export const about = {
   appAbout: 'HRMS in your pocket',
   slug: 'faith-hrms',
   scheme: 'faith',
-  version: '0.7.0',
+  version: '0.8.0',
   designDirection: 'Modern purple, calm, and trustworthy workplace companion.',
   changelog: [
+    {
+      version: '0.8.0',
+      summary: 'Added local support enquiries and unified the shared tab selector across modules.',
+    },
     {
       version: '0.7.0',
       summary: 'Added local leave requests with confirm-first date selection and session-only supporting-document metadata.',
