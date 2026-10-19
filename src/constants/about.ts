@@ -3,9 +3,13 @@ export const about = {
   appAbout: 'HRMS in your pocket',
   slug: 'faith-hrms',
   scheme: 'faith',
-  version: '0.5.0',
+  version: '0.6.0',
   designDirection: 'Modern purple, calm, and trustworthy workplace companion.',
   changelog: [
+    {
+      version: '0.6.0',
+      summary: 'Added local fictional meeting-room availability, session-only bookings, and calendar date selection.',
+    },
     {
       version: '0.5.0',
       summary: 'Added local read-only attendance views and nested-route scroll-to-top controls.',

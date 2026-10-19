@@ -102,3 +102,28 @@ src/
     └── useAttendance.ts
 advice
 
+Room Module
+based on app about, design direction
+module where user manage room booking for meetings
+user flow as date first (today), list all rooms, can change upcoming date, onPress rooms item list availabilty each 30mins, selectable timeslot
+ask purpose etc
+constant to keep types, dummy data etc
+contexts to keep flow, read etc
+hooks to use it globally
+components/room/ for any widgets related under
+├─ app/
+│  ├─ (tabs)/
+│  │  ├─ home/
+│  │  │  ├─ room/
+│  │  │  │  └─ index.tsx
+src/
+├── components/
+│   └── room/
+├── constants/
+│   └── room.ts
+├── contexts/
+│   └── roomContext.ts
+└── hooks/
+    └── useRoom.ts
+advice
+

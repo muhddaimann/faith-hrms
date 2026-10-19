@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.5.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.6.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -508,3 +508,13 @@ Do not make changes.
 - **Presentation and accessibility:** Attendance provides Daily, Weekly, and Monthly token-driven views. It uses accessible view tabs, 48-point period controls, text-plus-color semantic status badges, readable schedule/actual comparison, weekly summaries, and a scrollable monthly timeline suitable for narrow widths and large text.
 - **Floating controls:** Mount one shared `BottomBar` in the authenticated tabs shell rather than individual root screens. The tab pill is visible only at rest on `/home` and `/settings`; every focused route in the protected tabs shell, including nested Newsflash, Attendance, and Profile routes, can show the shared scroll-to-top control after scroll hysteresis. Root screens reserve floating-control clearance; nested screens retain no tab pill.
 - **Dependencies and validation:** Attendance added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual route, period, large-text, light/dark, floating-control, and session-only behavior.
+
+### Feature — Room Module
+
+- **Room boundary:** Faith provides local, fictional meeting-room availability and booking previews. It is not a production room-reservation system, facilities source of truth, calendar integration, attendee-notification system, real-time conflict checker, or backend integration.
+- **Route and navigation:** Room availability is an authenticated nested Home route at `/home/room`; session-only booking records are at `/home/room/record`. Both use the shared screen foundation, hide the root tab pill, and return through their owning Home flow without route animation.
+- **State and persistence:** `RoomProvider` and `useRoom()` own typed fixture rooms, selected fixture date, slot availability, and booking records. Booking data and meeting-purpose text remain in memory for the current app session only, reset on restart, and are neither persisted nor transmitted.
+- **Booking lifecycle:** A room schedule opens in the typed bottom sheet. Selecting an available 30-minute slot dismisses the sheet before opening the booking modal. Invalid purpose input shows a warning toast without saving. Valid confirmation dismisses the modal, displays a one-second blocking loader, then creates the in-memory booking and shows a success toast after loader exit. Cancellation and dismissal paths do not create bookings.
+- **DatePicker:** `src/components/shared/datePicker.tsx` provides themed calendar-grid single and range variants with a calendar grip, accessible month navigation, selected/disabled/in-range states, and constrained selectable values. Room booking uses the single-date variant restricted to its local October 2026 fixtures.
+- **Shared UI:** Newsflash, Room availability, and Room record empty states use `src/components/shared/emptyState.tsx` directly; do not add feature-specific empty-state wrappers for those screens.
+- **Dependencies and validation:** Room added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual local-booking, calendar, overlay-lifecycle, empty-state, narrow-width, large-text, light/dark, and iOS/Android behavior.

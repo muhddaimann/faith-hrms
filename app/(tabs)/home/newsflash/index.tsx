@@ -5,9 +5,9 @@ import { Pressable, View } from 'react-native';
 
 import { NewsflashCard } from '../../../../src/components/newsflash/newsflashCard';
 import { NewsflashDetail } from '../../../../src/components/newsflash/newsflashDetail';
-import { NewsflashEmptyState } from '../../../../src/components/newsflash/newsflashEmptyState';
 import { NewsflashPriorityTabs } from '../../../../src/components/newsflash/newsflashPriorityTabs';
 import { AppScreen } from '../../../../src/components/shared/appScreen';
+import { EmptyState } from '../../../../src/components/shared/emptyState';
 import { type NewsflashItem, type NewsflashPriorityFilter } from '../../../../src/constants/newsflash';
 import { OptionPicker } from '../../../../src/components/shared/optionPicker';
 import { useNewsflash } from '../../../../src/hooks/useNewsflash';
@@ -64,8 +64,9 @@ export default function NewsflashScreen() {
         <NewsflashPriorityTabs onSelect={setSelectedPriority} selectedPriority={selectedPriority} />
 
         {filteredItems.length === 0 ? (
-          <NewsflashEmptyState
+          <EmptyState
             description={acknowledgementFilter === 'unacknowledged' ? `There are no unacknowledged ${selectedPriority === 'all' ? 'company' : selectedPriority} updates to review right now.` : selectedPriority === 'all' ? 'There are no company updates to review right now.' : `There are no ${selectedPriority} company updates to review right now.`}
+            icon="newspaper-outline"
             title={acknowledgementFilter === 'unacknowledged' ? 'Nothing awaiting acknowledgement' : selectedPriority === 'all' ? 'No company updates' : `No ${selectedPriority} updates`}
           />
         ) : filteredItems.map((item) => <NewsflashCard acknowledged={isAcknowledged(item.id)} item={item} key={item.id} onPress={() => openNewsflash(item)} />)}
