@@ -5,7 +5,6 @@ import { Pressable, Text, View } from 'react-native';
 import { AppScreen } from '../../../src/components/shared/appScreen';
 import { LongList } from '../../../src/components/shared/longList';
 import { OptionPicker } from '../../../src/components/shared/optionPicker';
-import { BottomBar } from '../../../src/components/tabs/bottomBar';
 import { useTheme } from '../../../src/hooks/useTheme';
 import { useOverlay } from '../../../src/hooks/useOverlay';
 
@@ -19,8 +18,11 @@ export default function HomeScreen() {
       render: () => (
         <OptionPicker
           mode="action"
-            onSelect={(value) => dismiss(() => router.push(value as '/home/newsflash'))}
-            options={[{ value: '/home/newsflash', label: 'Open Newsflash', description: 'Review company updates after the modal finishes closing.' }]}
+          onSelect={(value) => dismiss(() => router.push(value as '/home/newsflash' | '/home/attendance'))}
+          options={[
+            { value: '/home/attendance', label: 'Open Attendance', description: 'Review local daily, weekly, and monthly attendance previews.' },
+            { value: '/home/newsflash', label: 'Open Newsflash', description: 'Review company updates after the modal finishes closing.' },
+          ]}
           title="Home actions"
         />
       ),
@@ -28,22 +30,20 @@ export default function HomeScreen() {
   };
 
   return (
-    <>
-      <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<HeaderAction onPress={openActions} />} subtitle="Your workplace companion for the updates that matter at work." title="Home">
-        <View style={{ gap: theme.spacing.lg }}>
-          <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, gap: theme.spacing.sm, ...theme.shadow.card }}>
-            <Ionicons color={theme.colors.icon} name="briefcase-outline" size={28} />
-            <Text style={{ ...theme.typography.title, color: theme.colors.text }}>Your workday, organized</Text>
-            <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Review company Newsflash updates alongside the workplace tools that support your day.</Text>
-          </View>
-
-          <ScreenAction label="Open Newsflash" onPress={() => router.push('/home/newsflash')} />
-          <ScreenAction label="Return to Faith landing" secondary onPress={() => router.replace('/')} />
-          <LongList label="Home foundation item" />
+    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<HeaderAction onPress={openActions} />} subtitle="Your workplace companion for the updates that matter at work." title="Home">
+      <View style={{ gap: theme.spacing.lg }}>
+        <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, gap: theme.spacing.sm, ...theme.shadow.card }}>
+          <Ionicons color={theme.colors.icon} name="briefcase-outline" size={28} />
+          <Text style={{ ...theme.typography.title, color: theme.colors.text }}>Your workday, organized</Text>
+          <Text style={{ ...theme.typography.body, color: theme.colors.textSecondary }}>Review local attendance, company Newsflash updates, and workplace tools that support your day.</Text>
         </View>
-      </AppScreen>
-      <BottomBar />
-    </>
+
+        <ScreenAction label="Open Attendance" onPress={() => router.push('/home/attendance')} />
+        <ScreenAction label="Open Newsflash" onPress={() => router.push('/home/newsflash')} />
+        <ScreenAction label="Return to Faith landing" secondary onPress={() => router.replace('/')} />
+        <LongList label="Home foundation item" />
+      </View>
+    </AppScreen>
   );
 }
 

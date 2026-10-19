@@ -11,6 +11,7 @@ import { BarProvider } from '../src/contexts/barContext';
 import { AuthProvider } from '../src/contexts/authContext';
 import { ProfileProvider } from '../src/contexts/profileContext';
 import { NewsflashProvider } from '../src/contexts/newsflashContext';
+import { AttendanceProvider } from '../src/contexts/attendanceContext';
 import { OverlayHost } from '../src/components/overlay/overlayHost';
 import { useTheme } from '../src/hooks/useTheme';
 import { useOverlay } from '../src/hooks/useOverlay';
@@ -31,11 +32,13 @@ export default function RootLayout() {
         <AuthProvider>
           <ProfileProvider>
             <NewsflashProvider>
-              <BarProvider>
-                <OverlayProvider>
-                  {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
-                </OverlayProvider>
-              </BarProvider>
+              <AttendanceProvider>
+                <BarProvider>
+                  <OverlayProvider>
+                    {(hostState) => <RootShell fontsLoaded={fontsLoaded} hostState={hostState} />}
+                  </OverlayProvider>
+                </BarProvider>
+              </AttendanceProvider>
             </NewsflashProvider>
           </ProfileProvider>
         </AuthProvider>

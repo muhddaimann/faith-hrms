@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { useTheme } from '../../src/hooks/useTheme';
 import { useAuth } from '../../src/hooks/useAuth';
+import { BottomBar } from '../../src/components/tabs/bottomBar';
 
 export default function TabsLayout() {
   const { theme } = useTheme();
@@ -18,6 +19,7 @@ export default function TabsLayout() {
         <Tabs.Screen name="home" />
         <Tabs.Screen name="settings" />
       </Tabs>
+      <BottomBar />
     </View>
   );
 }

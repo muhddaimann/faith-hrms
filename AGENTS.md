@@ -419,7 +419,7 @@ Do not make changes.
 ### Phase 1 — App Metadata and Native Foundation
 
 - **App metadata:** Faith — “HRMS in your pocket”; slug `faith-hrms`; deep-link scheme `faith`.
-- **Version policy:** The current version is `0.4.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
+- **Version policy:** The current version is `0.5.0`. `src/constants/about.ts` is the user-visible metadata source, and its version must match the root `package.json` and Expo config version.
 - **Native-only boundary:** Target iOS and Android. The web npm script, web Expo configuration, and web-only favicon asset were removed. Leave any declared scratchpad or excluded file untouched unless explicitly requested.
 - **Routing:** Expo Router is the app entry point. The root route structure begins with `app/_layout.tsx` and `app/index.tsx`; the root stack has hidden headers and disabled route animation.
 - **Typography and icons:** Use the Manrope font family through `@expo-google-fonts/manrope` and `expo-font`. Use `@expo/vector-icons` with Ionicons as the approved product icon system; do not substitute emoji or text glyphs as product icons without explicit approval.
@@ -498,3 +498,13 @@ Do not make changes.
 - **Detail and acknowledgement lifecycle:** Announcement details open in the global bottom sheet. Acknowledging an item dismisses the sheet first, then marks it acknowledged and presents a success toast after the approved dismiss lifecycle completes. Cancellation paths do not acknowledge an item.
 - **Scrollable sheet behavior:** Global bottom sheets cap their height within the viewport and render their content in a scroll view. The drag gesture remains restricted to the dedicated 44-point handle, and content preserves keyboard interaction plus bottom safe-area clearance.
 - **Dependencies and validation:** Newsflash added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual filtering, acknowledgement, sheet scrolling, narrow-width, large-text, light/dark, and iOS/Android behavior.
+
+### Feature — Attendance Module
+
+- **Attendance boundary:** Faith provides local, fictional, read-only attendance fixtures. It is not a production attendance tracker, HR record, payroll calculation, timekeeping system, approval flow, punch-in/out feature, or backend integration.
+- **Route and navigation:** Attendance is an authenticated nested Home route at `/home/attendance`. It uses the shared screen foundation, hides the root tab pill, and returns to `/home` with replacement navigation.
+- **State and persistence:** `AttendanceProvider` and `useAttendance()` own typed read-only records, active view, and selected fixture period. All data and selection state are in-memory only and reset on restart; no attendance data is stored or transmitted.
+- **Fixture model:** `src/constants/attendance.ts` owns deterministic October 2026 fixtures with scheduled and actual in/out values plus On time, Late arrival, Early departure, Absent, On leave, Weekend, and Scheduled statuses. Bounded prior/next navigation cannot leave the fixture range.
+- **Presentation and accessibility:** Attendance provides Daily, Weekly, and Monthly token-driven views. It uses accessible view tabs, 48-point period controls, text-plus-color semantic status badges, readable schedule/actual comparison, weekly summaries, and a scrollable monthly timeline suitable for narrow widths and large text.
+- **Floating controls:** Mount one shared `BottomBar` in the authenticated tabs shell rather than individual root screens. The tab pill is visible only at rest on `/home` and `/settings`; every focused route in the protected tabs shell, including nested Newsflash, Attendance, and Profile routes, can show the shared scroll-to-top control after scroll hysteresis. Root screens reserve floating-control clearance; nested screens retain no tab pill.
+- **Dependencies and validation:** Attendance added no dependencies or Expo configuration. Validate TypeScript, Expo public config, iOS/Android exports outside the repository, `git diff --check`, and manual route, period, large-text, light/dark, floating-control, and session-only behavior.

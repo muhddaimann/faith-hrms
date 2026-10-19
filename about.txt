@@ -77,3 +77,28 @@ src/
 └── hooks/
     └── useNewsflash.ts
 advice
+
+Attendance Module
+based on app about, design direction
+module where user get to view their attendance daily, weekly, monthly view
+no need punch in out feature, just dummy data of schedule in, out, actual in and out randomly each date
+constant to keep types, dummy data etc
+contexts to keep flow, read etc
+hooks to use it globally
+components/attendance/ for any widgets related under
+├─ app/
+│  ├─ (tabs)/
+│  │  ├─ home/
+│  │  │  ├─ attendance/
+│  │  │  │  └─ index.tsx
+src/
+├── components/
+│   └── attendance/
+├── constants/
+│   └── attendance.ts
+├── contexts/
+│   └── attendanceContext.ts
+└── hooks/
+    └── useAttendance.ts
+advice
+

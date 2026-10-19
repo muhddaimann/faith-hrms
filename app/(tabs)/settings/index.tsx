@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { AppScreen } from '../../../src/components/shared/appScreen';
 import { LongList } from '../../../src/components/shared/longList';
 import { OptionPicker } from '../../../src/components/shared/optionPicker';
-import { BottomBar } from '../../../src/components/tabs/bottomBar';
 import { ThemeToggle } from '../../../src/components/theme/themeToggle';
 import { useTheme } from '../../../src/hooks/useTheme';
 import { useOverlay } from '../../../src/hooks/useOverlay';
@@ -54,9 +53,8 @@ export default function SettingsScreen() {
   };
 
   return (
-    <>
-      <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<ThemeToggle />} subtitle="Review the active app foundation and session preferences." title="Settings">
-        <View style={{ gap: theme.spacing.lg }}>
+    <AppScreen eyebrow="FAITH HRMS" reserveFloatingControls rightSlot={<ThemeToggle />} subtitle="Review the active app foundation and session preferences." title="Settings">
+      <View style={{ gap: theme.spacing.lg }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md, borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radius.xl, backgroundColor: theme.colors.surface, padding: theme.spacing.lg, ...theme.shadow.card }}>
             <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: theme.radius.md, backgroundColor: theme.colors.primarySoft }}>
               <Ionicons color={theme.colors.icon} name={mode === 'dark' ? 'moon-outline' : 'sunny-outline'} size={24} />
@@ -84,9 +82,7 @@ export default function SettingsScreen() {
             <Text style={{ ...theme.typography.label, color: theme.colors.danger }}>Sign out</Text>
           </Pressable>
           <LongList label="Settings foundation item" />
-        </View>
-      </AppScreen>
-      <BottomBar />
-    </>
+      </View>
+    </AppScreen>
   );
 }
